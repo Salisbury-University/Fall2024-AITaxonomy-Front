@@ -1,9 +1,17 @@
 import  clientPromise  from '@/lib/mongodb';
 import { Category } from '@/components/category';
 import { AppSidebar } from "@/components/app-sidebar";
+
 import { ObjectId} from 'mongodb';
 import { ThemeProvider } from "@/components/theme-provider";
-import { ModeToggle } from "@/components/theme-select";
+
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,12 +20,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+
 
 interface CategoryInfo {
     /**
@@ -103,97 +106,60 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     };
 
     return (
-        <SidebarProvider>
-            <AppSidebar className="p-5 rounded-lg"/>
+        <SidebarProvider className="">
+            <AppSidebar className=""/>
+            <div className="top-0 left-0 p-1 h-10 text-white z-50 bg-white dark:bg-black">
+                <SidebarTrigger className="ml-1" />
+            </div>
             <SidebarInset>
-              <header className="flex sticky top-0 bg-background dark:bg-black h-16 shrink-0 items-center gap-2 border-b px-4 text-black dark:text-white">
-                {/* Sidebar Trigger and Separator */}
-                <div className="flex items-center gap-2">
-                  <SidebarTrigger className="ml-1" />
-                  <Separator orientation="vertical" className="mr-2 h-4" />
-                </div>
-
-                {/* Breadcrumb Section */}
-                <Breadcrumb className="flex-grow text-black dark:text-white">
-                  <BreadcrumbList className="flex gap-2">
-                    {slugArray.length > 0 ? (
-                      slugArray.map((slug, index) => (
-                        <div key={index} className="flex items-center">
-                          <BreadcrumbItem className="hidden md:block">
-                            <BreadcrumbLink href="#">{decodeURIComponent(slug)}</BreadcrumbLink>
-                          </BreadcrumbItem>
-                          {index < slugArray.length - 1 && (
+            <main className="bg-white dark:bg-black">
+              
+              <div className="ml-6 mt-2">
+              
+              {/* Breadcrumb Section */}
+              <Breadcrumb className="flex-grow text-black dark:text-white">
+                <BreadcrumbList className="flex gap-2 text-black dark:text-white">
+                      {slugArray.length > 0 ? (
+                        slugArray.map((slug, index) => (
+                          <>
+                            <BreadcrumbItem key={index} className="hidden md:block flex items-center p-4 pt-0">
+                              <BreadcrumbLink href="#">{decodeURIComponent(slug)}</BreadcrumbLink>
+                              
+                            </BreadcrumbItem>
                             <BreadcrumbSeparator className="hidden md:block" />
-                          )}
-                        </div>
+                          </>
                       ))
-                    ) : (
-                      <BreadcrumbItem>
-                        <BreadcrumbPage>No breadcrumbs available</BreadcrumbPage>
-                      </BreadcrumbItem>
-                    )}
-                  </BreadcrumbList>
-                </Breadcrumb>
-
-                {/* Theme Toggle Button */}
-                <ModeToggle className="ml-auto" />
-            </header>
-
-            <main>
-
-            
-              <div className="flex flex-col md:flex-row w-full h-full">
-                {/* Left Sidebar (Taxonomy) */}
-                
-
-                {/* Center Content */}
-                <div className="flex-grow bg-white dark:bg-black p-4 overflow-y-auto">
-                  <Category category={category}/>
-                </div>
-
-                {/* Right Sidebar */}
-                <div className="w-full md:w-1/4 bg-white dark:bg-black p-4 overflow-y-auto rounded-lg">
-                  <h2 className="text-lg font-semibold text-black dark:text-suGold">Right Sidebar</h2>
-                  <p className="text-gray-700 dark:text-suGold">Additional content or filters can go here.</p>
-                </div>
+                  ) : (
+                <BreadcrumbItem>
+                  <BreadcrumbPage>No breadcrumbs available</BreadcrumbPage>
+                </BreadcrumbItem>
+                )}
+                </BreadcrumbList>
+              </Breadcrumb>
               </div>
+              <Category className="bg-white dark:bg-suMaroon" category={category}/>
             </main>
           </SidebarInset>
       </SidebarProvider>
     );
   }else{
     return (
-      <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
+        <SidebarProvider className="bg-white dark:bg-suMaroon">
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex sticky top-0 bg-white dark:bg-suMaroon h-16 shrink-0 items-center gap-2 border-b px-4 text-black dark:text-white">
+            {/* Sidebar Trigger and Separator */}
+            <div className="flex items-center gap-2">
               <SidebarTrigger className="ml-1" />
               <Separator orientation="vertical" className="mr-2 h-4" />
-              <Breadcrumb>
-                <BreadcrumbList>
-                {slugArray.length > 0 ? (
-                    slugArray.map((slug, index) => (
-                      <div>
-                        <BreadcrumbItem className="hidden md:block">
-                          <BreadcrumbLink href="#">
-                            {slug}
-                          </BreadcrumbLink>
-                        </BreadcrumbItem>
-                        {index < slugArray.length - 1 && (
-                          <BreadcrumbSeparator className="hidden md:block" />
-                        )}
-                        </div>
-                    ))
-                  ) : (
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>No breadcrumbs available</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  )}
-                </BreadcrumbList>
-              </Breadcrumb>
-            </header>
-            <main>
-              <div className="flex flex-col md:flex-row w-full h-full">
+            </div>
+
+        </header>
+
+        <main className="bg-white dark:bg-black">
+
+        
+        <div className="flex flex-col md:flex-row w-full h-full">
                 {/* Left Sidebar (Taxonomy) */}
                 {/* Center Content */}
                 <div className="flex-grow bg-white dark:bg-black p-4 overflow-y-auto">
@@ -206,9 +172,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                   <p className="text-gray-700 dark:text-suGold">Additional content or filters can go here.</p>
                 </div>
               </div>
-            </main>
-          </SidebarInset>
-        </SidebarProvider>
+        </main>
+      </SidebarInset>
+  </SidebarProvider>
     );
   }
 }

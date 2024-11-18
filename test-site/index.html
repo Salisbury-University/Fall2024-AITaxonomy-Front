@@ -1,49 +1,168 @@
-import * as React from "react"
-import { ChevronRight } from "lucide-react"
-import Link from 'next/link'
-import { SearchForm } from "@/components/search-form"
-import { VersionSwitcher } from "@/components/version-switcher"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-} from "@/components/ui/sidebar"
-import { title } from "process"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bootstrap Sidebar with Breadcrumb and Dark Mode</title>
 
-interface TaxonomyItem {
-    name: string;
-    subCategories: Record<string, string[]>;
-  }
-  
-  interface NavItem {
-    title: string;
-    url: string;
-    items?: NavItem[];
-  }
-  
-  interface DataStructure {
-    versions: string[];
-    navMain: NavItem[];
-  }
-  
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
 
-// This is sample data.
-const taxonomy = [
-    {
-        name: "Agricultural sciences and natural resources",
-        subCategories: {
+  <!-- Custom CSS for dark mode -->
+  <style>
+    /* Define CSS variables for colors */
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --navbar-bg: #f8f9fa;
+      --sidebar-bg: #f8f9fa;
+      --breadcrumb-bg: #e9ecef;
+    }
+
+    .dark-mode {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --navbar-bg: #1e1e1e;
+      --sidebar-bg: #1e1e1e;
+      --breadcrumb-bg: #1e1e1e;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .navbar,
+    .breadcrumb {
+      background-color: var(--navbar-bg);
+    }
+
+    .sidebar {
+      background-color: var(--sidebar-bg);
+    }
+
+    .list-group-item {
+      background-color: var(--sidebar-bg);
+      color: var(--text-color);
+    }
+
+    .list-group-item:hover {
+      background-color: #333333;
+    }
+
+    /* Ensure all headings and text elements inherit text color */
+    h1, h2, h3, h4, h5, h6, p, a, li, span {
+      color: var(--text-color);
+    }
+
+    /* Adjust link colors */
+    a {
+      color: var(--text-color);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Adjust button styles */
+    .btn {
+      color: var(--text-color);
+      background-color: var(--navbar-bg);
+      border-color: var(--text-color);
+    }
+
+    .btn:hover {
+      background-color: var(--text-color);
+      color: var(--bg-color);
+    }
+
+    /* Adjust breadcrumb link colors */
+    .breadcrumb-item a {
+      color: var(--text-color);
+    }
+
+    .breadcrumb-item.active {
+      color: var(--text-color);
+    }
+
+    /* Sidebar styles */
+    .sidebar {
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    /* Adjust collapse toggle icons */
+    .nav-link.collapsed::after {
+      content: '+';
+      float: right;
+    }
+
+    .nav-link:not(.collapsed)::after {
+      content: '-';
+      float: right;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar with breadcrumb and dark mode toggle -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <!-- Additional breadcrumb items can be added dynamically -->
+        </ol>
+      </nav>
+      <!-- Dark mode toggle -->
+      <button class="btn ms-auto" id="darkModeToggle">
+        Dark Mode
+      </button>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <nav
+        id="sidebar"
+        class="col-md-3 col-lg-2 d-md-block sidebar collapse"
+      >
+        <div class="position-sticky">
+          <ul class="nav flex-column" id="categoryList">
+            <!-- Categories will be injected here -->
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Main content -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <h1>Welcome to the Bootstrap Sidebar with Breadcrumb and Dark Mode</h1>
+        <p>Content goes here.</p>
+      </main>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  ></script>
+
+  <!-- Feather Icons -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"
+  ></script>
+
+  <!-- Your dictionary of categories -->
+  <script>
+    // Example dictionary of categories
+    const categories = {
+        "Agricultural sciences and natural resources ": {
             "Agricultural, animal, plant, and veterinary sciences": [
                 "Agronomy and crop science",
                 "Animal sciences",
@@ -60,11 +179,8 @@ const taxonomy = [
                 "Natural resources conservation and research",
                 "Natural resources and conservation nec"
             ]
-        }
-    },
-    {
-        name: "Biological and biomedical sciences",
-        subCategories: {
+        },
+        "Biological and biomedical sciences": {
             "Biochemistry, biophysics, and molecular biology": [
                 "Biochemistry",
                 "Biochemistry and molecular biology",
@@ -133,11 +249,8 @@ const taxonomy = [
                 "Zoology and animal biology",
                 "Biological and biomedical sciences nec"
             ]
-        }
-    },
-    {
-        name: "Computer and information sciences",
-        subCategories: {
+        },
+        "Computer and information sciences": {
             "Computer science": [
                 "Computer science"
             ],
@@ -145,15 +258,12 @@ const taxonomy = [
                 "Artificial intelligence",
                 "Computer and information sciences, general",
                 "Computer systems networking and telecommunications",
-                "Informatics and information technology",
+                "Informatics and information technology ",
                 "Information science/ studies",
                 "Computer and information sciences nec"
             ]
-        }
-    },
-    {
-        name: "Engineering",
-        subCategories: {
+        },
+        "Engineering": {
             "Biological, biomedical, and biosystems engineering": [
                 "Bioengineering and biomedical engineering",
                 "Biological and biosystems engineering and biomedical technology"
@@ -204,11 +314,8 @@ const taxonomy = [
                 "Nuclear engineering",
                 "Engineering nec"
             ]
-        }
-    },
-    {
-        name: "Geosciences, atmospheric, and ocean sciences",
-        subCategories: {
+        },
+        "Geosciences, atmospheric, and ocean sciences": {
             "Geological and earth sciences": [
                 "Geochemistry",
                 "Geology",
@@ -225,11 +332,8 @@ const taxonomy = [
                 "Oceanography, chemical and physical",
                 "Atmospheric sciences and meteorology nec"
             ]
-        }
-    },
-    {
-        name: "Health sciences",
-        subCategories: {
+        },
+        "Health sciences": {
             "Nursing and nursing science": [
                 "Nursing education",
                 "Nursing science",
@@ -259,11 +363,8 @@ const taxonomy = [
                 "Rehabilitation and therapeutic sciences",
                 "Health sciences nec"
             ]
-        }
-    },
-    {
-        name: "Mathematics and statistics",
-        subCategories: {
+        },
+        "Mathematics and statistics": {
             "Applied mathematics": [
                 "Applied mathematics, general",
                 "Computational and applied mathematics",
@@ -280,11 +381,8 @@ const taxonomy = [
                 "Statistics",
                 "Statistics nec"
             ]
-        }
-    },
-    {
-        name: "Multidisciplinary/ interdisciplinary sciences",
-        subCategories: {
+        },
+        "Multidisciplinary/ interdisciplinary sciences": {
             "Interdisciplinary computer sciences": [
                 "Computer science and engineering",
                 "Electrical engineering and computer science",
@@ -299,11 +397,8 @@ const taxonomy = [
                 "Nutrition sciences",
                 "Multidisciplinary/ interdisciplinary sciences nec"
             ]
-        }
-    },
-    {
-        name: "Physical sciences",
-        subCategories: {
+        },
+        "Physical sciences": {
             "Astronomy and astrophysics": [
                 "Astronomy",
                 "Astrophysics",
@@ -337,11 +432,8 @@ const taxonomy = [
                 "Theoretical and mathematical physics",
                 "Physics and physical sciences nec"
             ]
-        }
-    },
-    {
-        name: "Psychology",
-        subCategories: {
+        },
+        "Psychology": {
             "Clinical psychology": [
                 "Clinical child psychology",
                 "Clinical psychology"
@@ -367,11 +459,8 @@ const taxonomy = [
                 "Psychology, general",
                 "Psychology nec"
             ]
-        }
-    },
-    {
-        name: "Social sciences",
-        subCategories: {
+        },
+        "Social sciences": {
             "Anthropology": [
                 "Anthropology, general",
                 "Cultural anthropology",
@@ -416,11 +505,8 @@ const taxonomy = [
                 "Linguistics",
                 "Social sciences nec"
             ]
-        }
-    },
-    {
-        name: "Business",
-        subCategories: {
+        },
+        "Business": {
             "Business administration and management": [
                 "Business management and administration",
                 "Organizational leadership",
@@ -435,11 +521,8 @@ const taxonomy = [
                 "Organizational behavior studies",
                 "Business nec"
             ]
-        }
-    },
-    {
-        name: "Education",
-        subCategories: {
+        },
+        "Education": {
             "Education leadership and administration": [
                 "Educational leadership and administration, general",
                 "Higher education and community college administration",
@@ -468,11 +551,8 @@ const taxonomy = [
                 "Education, general",
                 "Education nec"
             ]
-        }
-    },
-    {
-        name: "Humanities",
-        subCategories: {
+        },
+        "Humanities": {
             "English language and literature, letters": [
                 "American literature (United States)",
                 "Creative writing",
@@ -505,11 +585,8 @@ const taxonomy = [
                 "Humanities and humanistic studies",
                 "Theological and ministerial studies"
             ]
-        }
-    },
-    {
-        name: "Visual and performing arts",
-        subCategories: {
+        },
+        "Visual and performing arts": {
             "Performing arts": [
                 "Dance, drama, theatre arts and stagecraft",
                 "Music performance",
@@ -522,11 +599,8 @@ const taxonomy = [
                 "Film, cinema, and media studies",
                 "Visual arts, media studies/ design, and arts management nec"
             ]
-        }
-    },
-    {
-        name: "Other non-science and engineering",
-        subCategories: {
+        },
+        "Other non-science and engineering": {
             "Communications and journalism": [
                 "Applied communication, advertising, and public relations",
                 "Communication and media studies",
@@ -543,7 +617,7 @@ const taxonomy = [
                 "Social work and human services"
             ],
             "Non-science and engineering, other": [
-                "Architecture and architectural studies",
+                "Architecture and architectural studies ",
                 "City/ urban, community, and regional planning",
                 "Family, consumer sciences and human sciences",
                 "Homeland security and protective services",
@@ -552,77 +626,104 @@ const taxonomy = [
                 "Other non-science and engineering nec"
             ]
         }
+    };
+
+    // Function to build the sidebar menu
+    function buildSidebar(categories) {
+      const categoryList = document.getElementById("categoryList");
+      for (let topLevel in categories) {
+        // Create top-level item
+        const topItem = document.createElement("li");
+        topItem.classList.add("nav-item");
+
+        // Create a collapse toggle for top level
+        const topLink = document.createElement("a");
+        topLink.href = `#collapse-${topLevel.replace(/\s+/g, "")}`;
+        topLink.setAttribute("data-bs-toggle", "collapse");
+        topLink.setAttribute("aria-expanded", "false");
+        topLink.classList.add("nav-link", "collapsed");
+        topLink.innerHTML = `<span data-feather="folder"></span> ${topLevel}`;
+
+        topItem.appendChild(topLink);
+
+        // Create sublist for mid level
+        const midList = document.createElement("div");
+        midList.classList.add("collapse");
+        midList.id = `collapse-${topLevel.replace(/\s+/g, "")}`;
+        midList.setAttribute("data-bs-parent", "#categoryList");
+
+        const midNav = document.createElement("ul");
+        midNav.classList.add("nav", "flex-column", "ms-3");
+
+        const midCategories = categories[topLevel];
+        for (let midLevel in midCategories) {
+          const midItem = document.createElement("li");
+          midItem.classList.add("nav-item");
+
+          // Create a collapse toggle for mid level
+          const midLink = document.createElement("a");
+          midLink.href = `#collapse-${midLevel.replace(/\s+/g, "")}`;
+          midLink.setAttribute("data-bs-toggle", "collapse");
+          midLink.setAttribute("aria-expanded", "false");
+          midLink.classList.add("nav-link", "collapsed");
+          midLink.innerHTML = `<span data-feather="folder"></span> ${midLevel}`;
+
+          midItem.appendChild(midLink);
+
+          // Create sublist for low level
+          const lowList = document.createElement("div");
+          lowList.classList.add("collapse");
+          lowList.id = `collapse-${midLevel.replace(/\s+/g, "")}`;
+          lowList.setAttribute("data-bs-parent", midList.id);
+
+          const lowNav = document.createElement("ul");
+          lowNav.classList.add("nav", "flex-column", "ms-3");
+
+          const lowCategories = midCategories[midLevel];
+          for (let lowLevel of lowCategories) {
+            const lowItem = document.createElement("li");
+            lowItem.classList.add("nav-item");
+
+            const lowLink = document.createElement("a");
+            lowLink.href = "#";
+            lowLink.classList.add("nav-link");
+            lowLink.innerHTML = `<span data-feather="file"></span> ${lowLevel}`;
+
+            lowItem.appendChild(lowLink);
+            lowNav.appendChild(lowItem);
+          }
+
+          lowList.appendChild(lowNav);
+          midItem.appendChild(lowList);
+          midNav.appendChild(midItem);
+        }
+
+        midList.appendChild(midNav);
+        topItem.appendChild(midList);
+        categoryList.appendChild(topItem);
+      }
     }
-];
 
-function convertString(str: string) {
-    return encodeURIComponent(str);
-}
+    // Build the sidebar on page load
+    document.addEventListener("DOMContentLoaded", function () {
+      buildSidebar(categories);
 
-const data: DataStructure = {
-    versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
-    navMain: taxonomy.map((category) => ({
-      title: category.name,
-      url: convertString(category.name),
-      items: Object.entries(category.subCategories).map(
-        ([subCategoryTitle, subCategoryItems]) => ({
-          title: subCategoryTitle,
-          url: convertString(subCategoryTitle),
-          items: subCategoryItems.map((item: string) => ({
-            title: item,
-            url: convertString(item),
-          })),
-        })
-      ),
-    })),
-  };
+      // Initialize Feather Icons
+      feather.replace();
 
+      // Dark mode toggle
+      const darkModeToggle = document.getElementById("darkModeToggle");
+      darkModeToggle.addEventListener("click", function () {
+        document.body.classList.toggle("dark-mode");
+        // Change button text based on mode
+        darkModeToggle.textContent = document.body.classList.contains(
+          "dark-mode"
+        )
+          ? "Light Mode"
+          : "Dark Mode";
+      });
+    });
+  </script>
+</body>
+</html>
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  return (
-    <Sidebar {...props}>
-      <SidebarHeader className="p-4">
-        <SearchForm />
-      </SidebarHeader>
-      <SidebarContent className="gap-0 p-4">
-        {/* We create a collapsible SidebarGroup for each parent. */}
-        {data.navMain.map((item) => (
-          <Collapsible
-            key={item.title}
-            title={item.title}
-            defaultOpen={false}
-            className="group/collapsible text-suGold"
-          >
-            <SidebarGroup>
-              <SidebarGroupLabel
-                asChild
-                className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              >
-                <CollapsibleTrigger>
-                <Link href={"/categories/"+item.url}>
-                  {item.title}
-                </Link>
-                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                </CollapsibleTrigger>
-              </SidebarGroupLabel>
-              <CollapsibleContent>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {item.items?.map((obj) => (
-                      <SidebarMenuItem key={obj.title}>
-                        <SidebarMenuButton asChild>
-                          <Link href={obj.url}>{obj.title}</Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </CollapsibleContent>
-            </SidebarGroup>
-          </Collapsible>
-        ))}
-      </SidebarContent>
-      <SidebarRail />
-    </Sidebar>
-  )
-}

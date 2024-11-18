@@ -32,38 +32,67 @@ interface CategoryInfo {
 }
 
 interface CategoryProps {
+    className: String;
     category: CategoryInfo;
 }
 
-export function Category({ category }: CategoryProps) {
+export function Category({ className, category }: CategoryProps) {
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-black shadow-md rounded-lg">
-            <h1 className="text-3xl font-bold mb-4 text-black dark:text-white">{category.category_name}</h1>
-            <p className="text-base text-gray-700 dark:text-white mb-2">Faculty Count: {category.faculty_count}</p>
-            <p className="text-base text-gray-700 dark:text-white mb-2">Department Count: {category.department_count}</p>
-            <p className="text-base text-gray-700 dark:text-white mb-2">Article Count: {category.article_count}</p>
-            <p className="text-base text-gray-700 dark:text-white mb-2">Total Citations: {category.tc_count}</p>
-            <p className="text-base text-gray-700 dark:text-white mb-2">Citation Average: {category.citation_average}</p>
-            <div className="mb-6">
-                <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">DOI List</h2>
-                <ul className="list-disc list-inside">
-                    {category.doi_list.map((doi, index) => (
-                        <li key={index} className="text-base text-gray-700 dark:text-white">
-                            {doi}
-                        </li>
-                    ))}
-                </ul>
-            </div>
+        <div className="flex flex-col md:flex-row w-full h-full gap-10 max-h-full">
+            {/* Center Content */}
+            <div className="flex-grow p-4 overflow-y-auto bg-white dark:bg-suMaroon shadow-md rounded-lg">
+                <div className={"max-w-4xl mx-auto p-1 "+className}>
+                    <h1 className="text-3xl font-bold mb-4 text-black dark:text-white">{category.category_name}</h1>
+                    <p className="text-base text-gray-700 dark:text-white mb-2">Faculty Count: {category.faculty_count}</p>
+                    <p className="text-base text-gray-700 dark:text-white mb-2">Department Count: {category.department_count}</p>
+                    <p className="text-base text-gray-700 dark:text-white mb-2">Article Count: {category.article_count}</p>
+                    <p className="text-base text-gray-700 dark:text-white mb-2">Total Citations: {category.tc_count}</p>
+                    <p className="text-base text-gray-700 dark:text-white mb-2">Citation Average: {category.citation_average}</p>
+                    <div className="mb-6">
+                        <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">DOI List</h2>
+                        <ul className="list-disc list-inside">
+                            {category.doi_list.map((doi, index) => (
+                                <li key={index} className="text-base text-gray-700 dark:text-white">
+                                    {doi}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-            <div className="mb-6">
-                <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Faculty List</h2>
-                <ul className="list-disc list-inside">
-                    {category.faculty.map((doi, index) => (
-                        <li key={index} className="text-base text-gray-700 dark:text-white">
-                            {doi}
-                        </li>
-                    ))}
-                </ul>
+                    <div className="mb-6">
+                        <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Faculty List</h2>
+                        <ul className="list-disc list-inside">
+                            {category.faculty.map((faculty, index) => (
+                                <li key={index} className="text-base text-gray-700 dark:text-white">
+                                    {faculty}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {/* Right Sidebar */}
+            <div className="w-full md:w-1/3 h-full bg-white dark:bg-suMaroon p-4 rounded-lg overflow-scroll dark:border-white">
+                <div className="h-1/3 rounded-lg bg-suMaroon p-2">
+                    <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Articles</h1>
+                    <ul className="list-disc h-full w-full">
+                        {category.titles.map((title, index) => (
+                            <li key={index} className="text-black dark:text-white">
+                                {title}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="h-1/3 rounded-lg bg-suMaroon p-2">
+                    <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Departments</h1>
+                    <ul className="list-disc h-full w-full">
+                        {category.departments.map((department, index) => (
+                            <li key={index} className="text-black dark:text-white">
+                                {department}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
         </div>
     );
