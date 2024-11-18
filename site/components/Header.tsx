@@ -18,8 +18,8 @@ export function Header() {
           <Link title="Publications" href="/#publications" className="hover:underline">
             Publications
           </Link>
-          <Link title="Projects" href="/projects" className="hover:underline">
-            Projects
+          <Link title="Categories" href="/categories" className="hover:underline">
+            Categories
           </Link>
           <Link title="Misc" href="/misc" className="hover:underline">
             Misc

@@ -605,15 +605,43 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
-              <CollapsibleContent>
-                <SidebarGroupContent>
+              <CollapsibleContent className="overflow-scroll max-h-2rem">
+                <SidebarGroupContent >
                   <SidebarMenu>
                     {item.items?.map((obj) => (
-                      <SidebarMenuItem key={obj.title}>
-                        <SidebarMenuButton asChild>
-                          <Link href={obj.url}>{obj.title}</Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
+                        <Collapsible
+                        key={obj.title}
+                        title={obj.title}
+                        defaultOpen={false}
+                        className="group/collapsible text-suGold"
+                      >
+                        <SidebarGroup>
+                          <SidebarGroupLabel
+                            asChild
+                            className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                          >
+                            <CollapsibleTrigger>
+                            <Link href={"/categories/"+item.url+"/"+obj.url}>
+                              {obj.title}
+                            </Link>
+                              <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                            </CollapsibleTrigger>
+                          </SidebarGroupLabel>
+                          <CollapsibleContent className="overflow-scroll">
+                            <SidebarGroupContent>
+                              <SidebarMenu>
+                                {obj.items?.map((inner) => (
+                                  <SidebarMenuItem key={inner.title}>
+                                    <SidebarMenuButton asChild>
+                                      <Link href={"/categories/"+item.url+"/"+obj.url+"/"+inner.url}>{inner.title}</Link>
+                                    </SidebarMenuButton>
+                                  </SidebarMenuItem>
+                                ))}
+                              </SidebarMenu>
+                            </SidebarGroupContent>
+                          </CollapsibleContent>
+                        </SidebarGroup>
+                      </Collapsible>
                     ))}
                   </SidebarMenu>
                 </SidebarGroupContent>

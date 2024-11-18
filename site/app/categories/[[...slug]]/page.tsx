@@ -121,13 +121,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 <BreadcrumbList className="flex gap-2 text-black dark:text-white">
                       {slugArray.length > 0 ? (
                         slugArray.map((slug, index) => (
-                          <>
-                            <BreadcrumbItem key={index} className="hidden md:block flex items-center p-4 pt-0">
+                          <div  key={index} className="flex items-center pb-2 pt-0">
+                            <BreadcrumbItem className="hidden md:block flex items-center pr-1">
                               <BreadcrumbLink href="#">{decodeURIComponent(slug)}</BreadcrumbLink>
                               
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className="hidden md:block" />
-                          </>
+                          </div>
                       ))
                   ) : (
                 <BreadcrumbItem>
