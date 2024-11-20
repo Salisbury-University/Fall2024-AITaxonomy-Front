@@ -1,8 +1,7 @@
 import  clientPromise  from '@/lib/mongodb';
 import { Category } from '@/components/category';
 import { AppSidebar } from "@/components/app-sidebar";
-
-import { ObjectId} from 'mongodb';
+import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import { Separator } from "@/components/ui/separator";
@@ -56,13 +55,14 @@ interface CategoryInfo {
 }
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     slug?: string[];
-  };
+  }>;
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const slugArray = params?.slug ? params.slug : [];
+  const resolvedParams = await params;
+  const slugArray = resolvedParams.slug ? resolvedParams.slug : [];
   // Determine the category level based on the number of slugs
   const [topLevelCategory, midLevelCategory, lowLevelCategory] = slugArray;
 
@@ -106,12 +106,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     };
 
     return (
+      <div className="">
         <SidebarProvider className="">
             <AppSidebar className=""/>
-            <div className="top-0 left-0 p-1 h-10 text-white z-50 bg-white dark:bg-black">
-                <SidebarTrigger className="ml-1" />
+            <div className="fixed top-0 left-0 z-50 p-2">
+              <SidebarTrigger className="ml-1 bg-white dark:bg-black text-suGold dark:text-white rounded-md shadow-md" />
             </div>
             <SidebarInset>
+            <Header/>
             <main className="bg-white dark:bg-black">
               
               <div className="ml-6 mt-2">
@@ -141,40 +143,29 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             </main>
           </SidebarInset>
       </SidebarProvider>
+      </div>
     );
   }else{
+
     return (
-        <SidebarProvider className="bg-white dark:bg-suMaroon">
-        <AppSidebar />
-        <SidebarInset>
-          <header className="flex sticky top-0 bg-white dark:bg-suMaroon h-16 shrink-0 items-center gap-2 border-b px-4 text-black dark:text-white">
-            {/* Sidebar Trigger and Separator */}
-            <div className="flex items-center gap-2">
-              <SidebarTrigger className="ml-1" />
-              <Separator orientation="vertical" className="mr-2 h-4" />
+        <SidebarProvider>
+          <AppSidebar className=""/>
+            <div className="absolute top-0 left-0 z-50 p-2">
+              <SidebarTrigger className="ml-1 bg-white dark:bg-black text-suGold dark:text-white rounded-md shadow-md" />
             </div>
-
-        </header>
-
-        <main className="bg-white dark:bg-black">
-
-        
-        <div className="flex flex-col md:flex-row w-full h-full">
-                {/* Left Sidebar (Taxonomy) */}
-                {/* Center Content */}
-                <div className="flex-grow bg-white dark:bg-black p-4 overflow-y-auto">
-                  <h1>Hello, Welcome to the Category Menu</h1>
-                </div>
-
-                {/* Right Sidebar */}
-                <div className="w-full md:w-1/4 bg-white dark:bg-suMaroon p-4 overflow-y-auto rounded-lg">
-                  <h2 className="text-lg font-semibold text-black dark:text-suGold">Right Sidebar</h2>
-                  <p className="text-gray-700 dark:text-suGold">Additional content or filters can go here.</p>
-                </div>
+          <SidebarInset>
+            <Header/>
+            <main className="bg-white dark:bg-black">
+            <div className="flex flex-1 flex-col gap-4 p-4">
+              <div className="grid auto-rows-min gap-4 md:grid-cols-5">
+                {Array.from({ length: 20 }).map((_, i) => (
+                  <div key={i} className="aspect-square rounded-xl bg-muted/50" />
+                ))}
               </div>
-        </main>
-      </SidebarInset>
-  </SidebarProvider>
+            </div>
+            </main>
+          </SidebarInset>
+        </SidebarProvider>
     );
   }
 }

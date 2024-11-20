@@ -581,7 +581,7 @@ const data: DataStructure = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
-      <SidebarHeader className="p-4">
+      <SidebarHeader className="p-4 mt-6">
         <SearchForm />
       </SidebarHeader>
       <SidebarContent className="gap-0 p-4">
@@ -591,7 +591,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             key={item.title}
             title={item.title}
             defaultOpen={false}
-            className="group/collapsible text-suGold"
+            className="group/collapsible"
           >
             <SidebarGroup>
               <SidebarGroupLabel
@@ -605,7 +605,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
-              <CollapsibleContent className="overflow-scroll max-h-2rem">
+              <CollapsibleContent className="overflow-scroll">
                 <SidebarGroupContent >
                   <SidebarMenu>
                     {item.items?.map((obj) => (
@@ -613,12 +613,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         key={obj.title}
                         title={obj.title}
                         defaultOpen={false}
-                        className="group/collapsible text-suGold"
+                        className="group/collapsible pl-8"
                       >
                         <SidebarGroup>
                           <SidebarGroupLabel
                             asChild
-                            className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                            className="group/label text-sm text-left text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                           >
                             <CollapsibleTrigger>
                             <Link href={"/categories/"+item.url+"/"+obj.url}>
@@ -629,7 +629,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           </SidebarGroupLabel>
                           <CollapsibleContent className="overflow-scroll">
                             <SidebarGroupContent>
-                              <SidebarMenu>
+                              <SidebarMenu className="pl-4">
                                 {obj.items?.map((inner) => (
                                   <SidebarMenuItem key={inner.title}>
                                     <SidebarMenuButton asChild>

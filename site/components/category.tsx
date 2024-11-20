@@ -1,4 +1,4 @@
-
+import Link from 'next/link';
 interface CategoryInfo {
     /**
      * A TypeScript interface representing information about an academic category.
@@ -32,16 +32,16 @@ interface CategoryInfo {
 }
 
 interface CategoryProps {
-    className: String;
+    className: string;
     category: CategoryInfo;
 }
 
 export function Category({ className, category }: CategoryProps) {
     return (
-        <div className="flex flex-col md:flex-row w-full h-full gap-10 max-h-full">
+        <div className="flex flex-col md:flex-row w-full h-full gap-10 min-w-full">
             {/* Center Content */}
-            <div className="flex-grow p-4 overflow-y-auto bg-white dark:bg-suMaroon shadow-md rounded-lg">
-                <div className={"max-w-4xl mx-auto p-1 "+className}>
+            <div className=" flex-grow flex-1/2 p-4 overflow-y-auto bg-white dark:bg-suMaroon shadow-md rounded-lg">
+                <div className="max-w-4xl mx-auto p-1">
                     <h1 className="text-3xl font-bold mb-4 text-black dark:text-white">{category.category_name}</h1>
                     <p className="text-base text-gray-700 dark:text-white mb-2">Faculty Count: {category.faculty_count}</p>
                     <p className="text-base text-gray-700 dark:text-white mb-2">Department Count: {category.department_count}</p>
@@ -69,26 +69,39 @@ export function Category({ className, category }: CategoryProps) {
                             ))}
                         </ul>
                     </div>
+                    
                 </div>
             </div>
             {/* Right Sidebar */}
-            <div className="w-full md:w-1/3 h-full bg-white dark:bg-suMaroon p-4 rounded-lg overflow-scroll dark:border-white">
-                <div className="h-1/3 rounded-lg bg-suMaroon p-2">
-                    <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Articles</h1>
+            <div className="flex-grow flex-1/2 w-full md:w-1/3 h-full bg-white dark:bg-suMaroon p-4 rounded-lg overflow-scroll dark:border-white">
+                <div className=" rounded-lg bg-white dark:bg-suMaroon p-2">
+                    <h1 className="text-2xl font-semibold text-black dark:text-white">Articles</h1>
                     <ul className="list-disc h-full w-full">
                         {category.titles.map((title, index) => (
                             <li key={index} className="text-black dark:text-white">
-                                {title}
+                                <Link href={"/article/"+category.doi_list[index].replace('/', '-')}>
+                                    {title}
+                                </Link>
                             </li>
                         ))}
                     </ul>
                 </div>
-                <div className="h-1/3 rounded-lg bg-suMaroon p-2">
+                <div className="rounded-lg bg-white dark:bg-suMaroon p-2">
                     <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Departments</h1>
                     <ul className="list-disc h-full w-full">
                         {category.departments.map((department, index) => (
                             <li key={index} className="text-black dark:text-white">
                                 {department}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className=" rounded-lg bg-white dark:bg-suMaroon p-2">
+                    <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Themes</h1>
+                    <ul className="list-disc h-full w-full">
+                        {category.themes.map((theme, index) => (
+                            <li key={index} className="text-black dark:text-white">
+                                {theme}
                             </li>
                         ))}
                     </ul>

@@ -25,7 +25,7 @@ module.exports = {
   			suBlue: '#0084ae',
   			suGreen: '#00827e',
   			suPurple: '#614b78',
-  			background: 'black',
+  			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
