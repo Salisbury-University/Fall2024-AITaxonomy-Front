@@ -80,7 +80,7 @@ export function Category({ className, category }: CategoryProps) {
                             <h1 className="text-2xl font-semibold text-black dark:text-white mb-4">Articles</h1>
                             <ul className="space-y-2">
                                 {category.titles.map((title, index) => (
-                                <li className="text-black dark:text-white">
+                                <li key={index} className="text-black dark:text-white">
                                     <details className="group">
                                         <summary className="flex items-center cursor-pointer">
                                             <span className="mr-2 text-lg font-bold group-open:rotate-90 transform transition-transform">▸</span>
