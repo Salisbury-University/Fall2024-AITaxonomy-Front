@@ -38,75 +38,102 @@ interface CategoryProps {
 
 export function Category({ className, category }: CategoryProps) {
     return (
-        <div className="flex flex-col md:flex-row w-full h-full gap-10 min-w-full">
-            {/* Center Content */}
-            <div className=" flex-grow flex-1/2 p-4 overflow-y-auto bg-white dark:bg-suMaroon shadow-md rounded-lg">
-                <div className="max-w-4xl mx-auto p-1">
-                    <h1 className="text-3xl font-bold mb-4 text-black dark:text-white">{category.category_name}</h1>
-                    <p className="text-base text-gray-700 dark:text-white mb-2">Faculty Count: {category.faculty_count}</p>
-                    <p className="text-base text-gray-700 dark:text-white mb-2">Department Count: {category.department_count}</p>
-                    <p className="text-base text-gray-700 dark:text-white mb-2">Article Count: {category.article_count}</p>
-                    <p className="text-base text-gray-700 dark:text-white mb-2">Total Citations: {category.tc_count}</p>
-                    <p className="text-base text-gray-700 dark:text-white mb-2">Citation Average: {category.citation_average}</p>
-                    <div className="mb-6">
-                        <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">DOI List</h2>
-                        <ul className="list-disc list-inside">
-                            {category.doi_list.map((doi, index) => (
-                                <li key={index} className="text-base text-gray-700 dark:text-white">
-                                    {doi}
-                                </li>
-                            ))}
-                        </ul>
+        <div className="">
+        <h1 className="text-3xl font-bold mb-4 text-black dark:text-white">{category.category_name}</h1>
+        <div className="flex flex-col md:flex-row">
+        
+            <div className="flex flex-grow flex-row md:flex-col gap-4 p-4">
+                <div className="grid auto-rows-min gap-4 md:grid-cols-1 xl:grid-cols-2">
+                    {/* Center Content */}
+                    
+                    <div className="rounded-xl p-4 overflow-y-auto bg-white dark:bg-suMaroon shadow-md">
+                        <div className="max-w-4xl mx-auto p-1">
+                            <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Statistics</h2>
+                            <p className="text-base text-gray-700 dark:text-white mb-2">Faculty Count: {category.faculty_count}</p>
+                            <p className="text-base text-gray-700 dark:text-white mb-2">Department Count: {category.department_count}</p>
+                            <p className="text-base text-gray-700 dark:text-white mb-2">Article Count: {category.article_count}</p>
+                            <p className="text-base text-gray-700 dark:text-white mb-2">Total Citations: {category.tc_count}</p>
+                            <p className="text-base text-gray-700 dark:text-white mb-2">Citation Average: {category.citation_average}</p>
+                        </div>
+                    </div>
+                    <div className="rounded-xl p-4 overflow-y-auto bg-white dark:bg-suMaroon shadow-md">
+                        <div className="mb-6">
+                            <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Faculty Members</h2>
+                            <div className="grid grid-flow-col auto-rows-max gap-x-4">
+                                {Array.from({ length: Math.ceil(category.faculty.length / 6) }, (_, columnIndex) => (
+                                    <ul key={columnIndex} className="list-disc list-inside">
+                                        {category.faculty
+                                            .slice(columnIndex * 6, columnIndex * 6 + 6)
+                                            .map((faculty, index) => (
+                                                <li key={index} className="text-base text-gray-700 dark:text-white">
+                                                    {faculty}
+                                                </li>
+                                        ))}
+                                    </ul>
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="mb-6">
-                        <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Faculty List</h2>
-                        <ul className="list-disc list-inside">
-                            {category.faculty.map((faculty, index) => (
-                                <li key={index} className="text-base text-gray-700 dark:text-white">
-                                    {faculty}
+                    <div className="rounded-xl bg-white dark:bg-suMaroon p-4 overflow-scroll dark:border-white">
+                        <div className="rounded-lg bg-white dark:bg-suMaroon p-2">
+                            <h1 className="text-2xl font-semibold text-black dark:text-white mb-4">Articles</h1>
+                            <ul className="space-y-2">
+                                {category.titles.map((title, index) => (
+                                <li className="text-black dark:text-white">
+                                    <details className="group">
+                                        <summary className="flex items-center cursor-pointer">
+                                            <span className="mr-2 text-lg font-bold group-open:rotate-90 transform transition-transform">▸</span>
+                                            <Link href={"/article/"+ category.doi_list[index].replace('/', '-')} className="hover:underline">
+                                                { title }
+                                            </Link>
+                                        </summary>
+                                        <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 ml-6">
+                                            DOI: { category.doi_list[index] }
+                                        </p>
+                                    </details>
+                                </li>
+                            ))}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className=" rounded-xl bg-white dark:bg-suMaroon p-4 rounded-lg overflow-scroll dark:border-white">
+                        <div className="rounded-lg bg-white dark:bg-suMaroon p-2">
+                            <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Departments</h1>
+                            <ul className="list-disc h-full w-full">
+                                {category.departments.map((department, index) => {
+                                    if (department.toLowerCase().includes("salisbury university")) {
+                                        const trimmedText = department.split(",")[0]; // Extract text up to the first comma
+                                        return (
+                                            <li key={index} className="text-black dark:text-white">
+                                                {trimmedText}
+                                            </li>
+                                        );
+                                    }
+                                    return null; // Skip rendering if the condition is not met
+                                })}
+                            </ul>
+                        </div>
+                    </div>
+
+                
+                </div>
+            
+            </div>
+            <div className="flex-grow rounded-xl bg-white dark:bg-suMaroon p-4 rounded-lg overflow-y-scroll dark:border-white my-4">
+                    <div className="rounded-lg bg-white dark:bg-suMaroon p-2">
+                        <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Themes</h1>
+                        <ul className="list-disc h-full w-full">
+                            {category.themes.map((theme, index) => (
+                                <li key={index} className="text-black dark:text-white">
+                                    {theme}
                                 </li>
                             ))}
                         </ul>
                     </div>
-                    
-                </div>
             </div>
-            {/* Right Sidebar */}
-            <div className="flex-grow flex-1/2 w-full md:w-1/3 h-full bg-white dark:bg-suMaroon p-4 rounded-lg overflow-scroll dark:border-white">
-                <div className=" rounded-lg bg-white dark:bg-suMaroon p-2">
-                    <h1 className="text-2xl font-semibold text-black dark:text-white">Articles</h1>
-                    <ul className="list-disc h-full w-full">
-                        {category.titles.map((title, index) => (
-                            <li key={index} className="text-black dark:text-white">
-                                <Link href={"/article/"+category.doi_list[index].replace('/', '-')}>
-                                    {title}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className="rounded-lg bg-white dark:bg-suMaroon p-2">
-                    <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Departments</h1>
-                    <ul className="list-disc h-full w-full">
-                        {category.departments.map((department, index) => (
-                            <li key={index} className="text-black dark:text-white">
-                                {department}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className=" rounded-lg bg-white dark:bg-suMaroon p-2">
-                    <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Themes</h1>
-                    <ul className="list-disc h-full w-full">
-                        {category.themes.map((theme, index) => (
-                            <li key={index} className="text-black dark:text-white">
-                                {theme}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
+        </div>
         </div>
     );
 }

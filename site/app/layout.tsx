@@ -16,7 +16,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           disableTransitionOnChange
         >
           {children}
-          <Footer/>
         </ThemeProvider>
       </body>
     </html>

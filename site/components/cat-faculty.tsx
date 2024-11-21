@@ -33,7 +33,7 @@ export function CategoryFaculty({ data }:catFacultyProps) {
 
   return (
     <ChartContainer config={chartConfig} className="min-h-full w-full">
-        <BarChart accessibilityLayer data={data}>
+        <BarChart accessibilityLayer data={data} >
           <CartesianGrid vertical={false} />
           <XAxis
               dataKey="category"

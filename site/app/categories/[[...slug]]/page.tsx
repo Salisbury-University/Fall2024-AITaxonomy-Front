@@ -10,7 +10,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-
+import { Footer } from "@/components/Footer";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -164,6 +164,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               </div>
             </div>
             </main>
+            <Footer/>
           </SidebarInset>
         </SidebarProvider>
     );
