@@ -27,6 +27,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "concurrently": "^9.0.1",
+    "embla-carousel-react": "^8.5.1",
     "eslint": "8.41.0",
     "eslint-config-next": "15.0.3",
     "link": "^2.1.1",
@@ -51,6 +52,7 @@
     "react-is": "^19.0.0-rc-69d4b800-20241021"
   },
   "devDependencies": {
+    "@types/mongodb": "^4.0.7",
     "@types/recharts": "^1.8.29"
   }
 }

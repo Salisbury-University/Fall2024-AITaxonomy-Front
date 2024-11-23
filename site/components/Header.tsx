@@ -7,7 +7,7 @@ import { faGraduationCap } from '@fortawesome/free-solid-svg-icons';
 export function Header() {
   return (
 
-    <header className="py-4 border-b sticky top-0 w-full bg-white dark:bg-suMaroon text-black dark:text-white backdrop-filter backdrop-blur-md rounded-lg">
+    <header className="py-4 border-b sticky top-0 w-full bg-white dark:bg-suMaroon text-black dark:text-white backdrop-filter backdrop-blur-md rounded-lg z-40">
       <div className="max-w-4xl w-full flex items-center justify-between px-4 mx-auto">
         <Link href="/categories">
             <FontAwesomeIcon icon={ faGraduationCap } className="mr-2 h-8 w-8 text-black dark:text-white" />
