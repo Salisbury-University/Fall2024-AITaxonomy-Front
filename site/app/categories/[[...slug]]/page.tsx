@@ -106,7 +106,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     };
 
     return (
-      <div className="">
+      <div className="min-w-full">
         <SidebarProvider className="">
             <AppSidebar className=""/>
             <div className="fixed top-0 left-0 z-50 p-2">
@@ -139,7 +139,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 </BreadcrumbList>
               </Breadcrumb>
               </div>
-              <Category className="bg-white dark:bg-suMaroon" category={category}/>
+              <Category className="bg-white dark:bg-black" category={category}/>
             </main>
           </SidebarInset>
       </SidebarProvider>

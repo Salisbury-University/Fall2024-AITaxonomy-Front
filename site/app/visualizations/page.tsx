@@ -1,6 +1,14 @@
 import { Header } from "@/components/Header";
 import { CategoryFaculty } from "@/components/cat-faculty";
 import  clientPromise  from '@/lib/mongodb';
+import * as React from "react"
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
 
 interface CategoryInfo {
   /**
@@ -72,14 +80,32 @@ export default async function Page() {
         }
         return shuffled;
     };
+  
+  const newData = shuffleArray(chartData);
 
   return (
     <>
       <Header />
+
+      
       <div className="grid grid-cols-3 gap-4 p-4">
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
-          <h1>Faculty Per Category</h1>
-          <CategoryFaculty data={shuffleArray(chartData)}/>
+        <div className="container bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          <Carousel className="w-full max-w-xs md:m-10">
+            <CarouselContent>
+              {Array.from({ length: newData.length / 5}).map((_, index) => (
+                <CarouselItem key={index}>
+              
+                  <h1>Faculty Per Category</h1>
+                  
+                  <CategoryFaculty data={newData.slice(index * 5, index * 5 + 5)}/>
+                                
+                            
+                </CarouselItem>
+              ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+          </Carousel>
         </div>
       </div>
 
@@ -100,19 +126,4 @@ export default async function Page() {
       </div> */}
     </> 
   );
-  function getTransformOrigin(index: number) {
-    const column = index % 3; // 0, 1, 2 (left, center, right)
-    const row = Math.floor(index / 3); // 0, 1 (top, bottom)
-
-    let origin = "";
-
-    if (row === 0) origin += "top ";
-    else origin += "bottom ";
-
-    if (column === 0) origin += "left";
-    else if (column === 1) origin += "center";
-    else origin += "right";
-
-    return origin;
-  }
 }

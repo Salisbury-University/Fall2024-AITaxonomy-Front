@@ -15,7 +15,7 @@ import {
 const chartConfig = {
   Faculty: {
     label: "Faculty",
-    color: "#2563eb",
+    color: "#8a0000",
   },
 } satisfies ChartConfig
 
@@ -32,7 +32,7 @@ interface catFacultyProps {
 export function CategoryFaculty({ data }:catFacultyProps) {
 
   return (
-    <ChartContainer config={chartConfig} className="min-h-full w-full">
+    <ChartContainer config={chartConfig} className="min-h-full w-full dark:text-white">
         <BarChart accessibilityLayer data={data} >
           <CartesianGrid vertical={false} />
           <XAxis
@@ -40,10 +40,10 @@ export function CategoryFaculty({ data }:catFacultyProps) {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value: string) => value.slice(0, 3)}
+              tickFormatter={(value: string)=> value.slice(0, 3)}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="faculty" fill="var(--color-desktop)" radius={4}/>
+            <Bar dataKey="faculty" fill="var(--color-Faculty)" radius={4}/>
         </BarChart>
     </ChartContainer>
   );
