@@ -11,13 +11,7 @@ export default function Home() {
 
   return (
     <>
-      <SidebarProvider>
-          <AppSidebar/>
-            <div className="absolute top-0 left-0 z-50 p-2">
-              <SidebarTrigger className="ml-1 bg-white dark:bg-black text-suGold dark:text-white rounded-md shadow-md" />
-            </div>
-          <SidebarInset>
-            <Header/>
+      <Header/>
             <main className="bg-white dark:bg-black m-10">
             {/* <div className="flex flex-1 flex-col gap-4 p-4">
               <div className="grid auto-rows-min gap-4 md:grid-cols-5">
@@ -39,8 +33,6 @@ export default function Home() {
               
 
             </main>
-          </SidebarInset>
-        </SidebarProvider>
     </>
   );
 }

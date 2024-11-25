@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react"
 import Link from 'next/link'
 import { SearchForm } from "@/components/search-form"
 import { VersionSwitcher } from "@/components/version-switcher"
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -34,7 +35,6 @@ interface TaxonomyItem {
   }
   
   interface DataStructure {
-    versions: string[];
     navMain: NavItem[];
   }
   
@@ -559,98 +559,249 @@ function convertString(str: string) {
     return encodeURIComponent(str);
 }
 
-const data: DataStructure = {
-    versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
-    navMain: taxonomy.map((category) => ({
-      title: category.name,
-      url: convertString(category.name),
-      items: Object.entries(category.subCategories).map(
-        ([subCategoryTitle, subCategoryItems]) => ({
-          title: subCategoryTitle,
-          url: convertString(subCategoryTitle),
-          items: subCategoryItems.map((item: string) => ({
-            title: item,
-            url: convertString(item),
-          })),
-        })
-      ),
-    })),
-  };
 
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  return (
-    <Sidebar {...props}>
-      <SidebarHeader className="p-4 mt-6">
-        <SearchForm />
-      </SidebarHeader>
-      <SidebarContent className="gap-0 p-4">
-        {/* We create a collapsible SidebarGroup for each parent. */}
-        {data.navMain.map((item) => (
-          <Collapsible
-            key={item.title}
-            title={item.title}
-            defaultOpen={false}
-            className="group/collapsible"
-          >
-            <SidebarGroup>
-              <SidebarGroupLabel
-                asChild
-                className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              >
-                <CollapsibleTrigger>
-                <Link href={"/categories/"+item.url}>
-                  {item.title}
-                </Link>
-                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                </CollapsibleTrigger>
-              </SidebarGroupLabel>
-              <CollapsibleContent className="overflow-scroll">
-                <SidebarGroupContent >
-                  <SidebarMenu>
-                    {item.items?.map((obj) => (
-                        <Collapsible
-                        key={obj.title}
-                        title={obj.title}
-                        defaultOpen={false}
-                        className="group/collapsible pl-8"
-                      >
-                        <SidebarGroup>
-                          <SidebarGroupLabel
-                            asChild
-                            className="group/label text-sm text-left text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                          >
-                            <CollapsibleTrigger>
-                            <Link href={"/categories/"+item.url+"/"+obj.url}>
-                              {obj.title}
-                            </Link>
-                              <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                            </CollapsibleTrigger>
-                          </SidebarGroupLabel>
-                          <CollapsibleContent className="overflow-scroll">
-                            <SidebarGroupContent>
-                              <SidebarMenu className="pl-4">
-                                {obj.items?.map((inner) => (
-                                  <SidebarMenuItem key={inner.title}>
-                                    <SidebarMenuButton asChild>
-                                      <Link href={"/categories/"+item.url+"/"+obj.url+"/"+inner.url}>{inner.title}</Link>
-                                    </SidebarMenuButton>
-                                  </SidebarMenuItem>
-                                ))}
-                              </SidebarMenu>
-                            </SidebarGroupContent>
-                          </CollapsibleContent>
-                        </SidebarGroup>
-                      </Collapsible>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </CollapsibleContent>
-            </SidebarGroup>
-          </Collapsible>
-        ))}
-      </SidebarContent>
-      <SidebarRail />
-    </Sidebar>
-  )
+interface sidebarProps extends React.ComponentProps<typeof Sidebar> {
+    categories: string[];
+}
+
+function buildCategoryTree(categories: string[]): Record<string, Record<string, string[]>> {
+    const result: Record<string, Record<string, string[]>> = {};
+  
+    for (const categoryPath of categories) {
+      if (!categoryPath || typeof categoryPath !== 'string' || categoryPath.trim() === '') {
+        console.warn(`Skipping invalid or empty categoryPath: "${categoryPath}"`);
+        continue; // Skip invalid entries
+      }
+  
+      // Decode the URL-encoded category path
+      let decodedCategoryPath: string;
+      try {
+        decodedCategoryPath = decodeURIComponent(categoryPath);
+      } catch (error) {
+        console.error(`Error decoding categoryPath "${categoryPath}":`, error);
+        continue; // Skip entries that cannot be decoded
+      }
+  
+      const levels = decodedCategoryPath
+        .split('/')
+        .map((level) => level.trim())
+        .filter((level) => level !== '');
+  
+      if (levels.length === 0) {
+        console.warn(`Skipping categoryPath with no valid levels after decoding: "${categoryPath}"`);
+        continue;
+      }
+  
+      if (levels.length === 1) {
+        // Handle top-level category
+        const [topLevel] = levels;
+        if (!(topLevel in result)) {
+          result[topLevel] = {};
+        }
+      } else if (levels.length === 2) {
+        // Handle top-level and mid-level category
+        const [topLevel, midLevel] = levels;
+        if (!(topLevel in result)) {
+          result[topLevel] = {};
+        }
+        if (!(midLevel in result[topLevel])) {
+          result[topLevel][midLevel] = [];
+        }
+      } else if (levels.length >= 3) {
+        // Handle top-level, mid-level, and combined low-level category
+        const [topLevel, midLevel, ...lowLevelParts] = levels;
+        const lowLevel = lowLevelParts.join('/'); // Combine remaining parts into one string
+  
+        if (!(topLevel in result)) {
+          result[topLevel] = {};
+        }
+        if (!(midLevel in result[topLevel])) {
+          result[topLevel][midLevel] = [];
+        }
+        if (!result[topLevel][midLevel].includes(lowLevel)) {
+          result[topLevel][midLevel].push(lowLevel);
+        }
+      }
+    }
+  
+    return result;
+  }
+  
+  
+  
+  
+  
+export function AppSidebar({ categories, ...props }: sidebarProps) {
+
+    const sidebarContent = buildCategoryTree(categories);
+    const data: DataStructure = {
+        navMain: taxonomy.map((category) => ({
+          title: category.name,
+          url: convertString(category.name),
+          items: Object.entries(category.subCategories).map(
+            ([subCategoryTitle, subCategoryItems]) => ({
+              title: subCategoryTitle,
+              url: convertString(subCategoryTitle),
+              items: subCategoryItems.map((item: string) => ({
+                title: item,
+                url: convertString(item),
+              })),
+            })
+          ),
+        })),
+      };
+      
+    return (
+        // <Sidebar {...props}>
+        // <SidebarHeader className="p-4 mt-6">
+        //     <SearchForm />
+        // </SidebarHeader>
+        // <SidebarContent className="gap-0 p-4">
+        //     {/* We create a collapsible SidebarGroup for each parent. */}
+        //     {data.navMain.map((item) => (
+        //     <Collapsible
+        //         key={item.title}
+        //         title={item.title}
+        //         defaultOpen={false}
+        //         className="group/collapsible"
+        //     >
+        //         <SidebarGroup>
+        //         <SidebarGroupLabel
+        //             asChild
+        //             className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+        //         >
+        //             <CollapsibleTrigger>
+        //             <Link href={"/categories/"+item.url}>
+        //             {item.title}
+        //             </Link>
+        //             <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+        //             </CollapsibleTrigger>
+        //         </SidebarGroupLabel>
+        //         <CollapsibleContent className="overflow-scroll">
+        //             <SidebarGroupContent >
+        //             <SidebarMenu>
+        //             {item.items?.map((obj) => (
+        //                     <Collapsible
+        //                         key={obj.title}
+        //                         title={obj.title}
+        //                         defaultOpen={false}
+        //                         className="group/collapsible pl-8"
+        //                     >
+        //                         <SidebarGroup>
+        //                         <SidebarGroupLabel
+        //                             asChild
+        //                             className="group/label text-sm text-left text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+        //                         >
+        //                             <CollapsibleTrigger>
+        //                             <Link href={`/categories/${item.url}/${obj.url}`}>
+        //                                 {obj.title}
+        //                             </Link>
+        //                             <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+        //                             </CollapsibleTrigger>
+        //                         </SidebarGroupLabel>
+        //                         <CollapsibleContent className="overflow-scroll">
+        //                             <SidebarGroupContent>
+        //                             <SidebarMenu className="pl-4">
+        //                                 {obj.items?.map((inner) => (
+        //                                     <SidebarMenuItem key={inner.title}>
+        //                                         <SidebarMenuButton asChild>
+        //                                         <Link href={`/categories/${item.url}/${obj.url}/${inner.url}`}>
+        //                                             {inner.title}
+        //                                         </Link>
+        //                                         </SidebarMenuButton>
+        //                                     </SidebarMenuItem>
+        //                                 ))}
+        //                             </SidebarMenu>
+        //                             </SidebarGroupContent>
+        //                         </CollapsibleContent>
+        //                         </SidebarGroup>
+        //                     </Collapsible>
+                            
+        //                     ))}
+        //             </SidebarMenu>
+        //             </SidebarGroupContent>
+        //         </CollapsibleContent>
+        //         </SidebarGroup>
+        //     </Collapsible>
+        //     ))}
+        // </SidebarContent>
+        // <SidebarRail />
+        // </Sidebar>
+        <Sidebar {...props}>
+        <SidebarHeader className="p-4 mt-6">
+            <SearchForm />
+        </SidebarHeader>
+        <SidebarContent className="gap-0 p-4">
+            {/* We create a collapsible SidebarGroup for each parent. */}
+            {Object.entries(sidebarContent).sort().map(([title, subCategoryItems]) => (
+            <Collapsible
+                key={title}
+                title={title}
+                defaultOpen={false}
+                className="group/collapsible"
+            >
+                <SidebarGroup>
+                <SidebarGroupLabel
+                    asChild
+                    className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                >
+                    <CollapsibleTrigger>
+                    <Link href={"/categories/"+encodeURI(title)}>
+                    {title}
+                    </Link>
+                    <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                    </CollapsibleTrigger>
+                </SidebarGroupLabel>
+                <CollapsibleContent className="overflow-scroll">
+                    <SidebarGroupContent >
+                    <SidebarMenu>
+                    {Object.entries(subCategoryItems).sort().map(([subCategoryTitle, lowtitles]) => (
+                            <Collapsible
+                                key={subCategoryTitle}
+                                title={subCategoryTitle}
+                                defaultOpen={false}
+                                className="group/collapsible pl-8"
+                            >
+                                <SidebarGroup>
+                                <SidebarGroupLabel
+                                    asChild
+                                    className="group/label text-sm text-left text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                >
+                                    <CollapsibleTrigger>
+                                    <Link href={`/categories/${encodeURI(title)}/${encodeURI(subCategoryTitle)}`}>
+                                        {subCategoryTitle}
+                                    </Link>
+                                    <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                                    </CollapsibleTrigger>
+                                </SidebarGroupLabel>
+                                <CollapsibleContent className="overflow-scroll">
+                                    <SidebarGroupContent>
+                                    <SidebarMenu className="pl-4">
+                                        {lowtitles.map((inner) => (
+                                            <SidebarMenuItem key={inner}>
+                                                <SidebarMenuButton asChild>
+                                                <Link href={`/categories/${encodeURI(title)}/${encodeURI(subCategoryTitle)}/${encodeURI(inner)}`}>
+                                                    {inner}
+                                                </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+                                        ))}
+                                    </SidebarMenu>
+                                    </SidebarGroupContent>
+                                </CollapsibleContent>
+                                </SidebarGroup>
+                            </Collapsible>
+                            
+                            ))}
+                    </SidebarMenu>
+                    </SidebarGroupContent>
+                </CollapsibleContent>
+                </SidebarGroup>
+            </Collapsible>
+            ))}
+        </SidebarContent>
+        <SidebarRail />
+        </Sidebar>
+    )
 }

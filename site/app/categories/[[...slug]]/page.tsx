@@ -137,14 +137,23 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     title = 'Categories';
   }
 
+  const client = await clientPromise;
+
+  const db = client.db('Site_Data'); // Replace with your actual DB name
+  const collection = await db.collection('category_data');
+    
+    // Query MongoDB for the field (e.g., "category_name")
+  const results = await collection
+  .find({}, { projection: { url: 1, _id: 0 } }) // Include "category_name" and exclude "_id"
+  .toArray();
+
+  // Extract the field values
+  const categoryNames = results.map((doc) => doc.url);
+
+
   if(title != 'Categories'){
-    const client = await clientPromise;
-
-    const db = client.db('Site_Data'); // Replace with your actual DB name
-    const collection = await db.collection('category_data')
-      // Get the last element in the slug array or default to an empty string
+    // Get the last element in the slug array or default to an empty string
     const documents = await collection.find({"url": title}).toArray();
-
 
     if (documents.length === 0) return <p>Data not found</p>;
     // Transform documents to CategoryInfo type
@@ -167,7 +176,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     return (
       <div className="min-w-full">
         <SidebarProvider className="">
-            <AppSidebar className=""/>
+            <AppSidebar categories={categoryNames}/>
             <div className="fixed top-0 left-0 z-50 p-2">
               <SidebarTrigger className="ml-1 bg-white dark:bg-black text-suGold dark:text-white rounded-md shadow-md" />
             </div>
@@ -179,23 +188,31 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               
               {/* Breadcrumb Section */}
               <Breadcrumb className="flex-grow text-black dark:text-white">
-                <BreadcrumbList className="flex gap-2 text-black dark:text-white">
-                      {slugArray.length > 0 ? (
-                        slugArray.map((slug, index) => (
-                          <div  key={index} className="flex items-center pb-2 pt-0">
-                            <BreadcrumbItem className="hidden md:block flex items-center pr-1">
-                              <BreadcrumbLink href="#">{decodeURIComponent(slug)}</BreadcrumbLink>
-                              
-                            </BreadcrumbItem>
-                            <BreadcrumbSeparator className="hidden md:block" />
-                          </div>
-                      ))
-                  ) : (
-                <BreadcrumbItem>
-                  <BreadcrumbPage>No breadcrumbs available</BreadcrumbPage>
-                </BreadcrumbItem>
+              <BreadcrumbList className="flex gap-2 text-black dark:text-white">
+                {slugArray.length > 0 ? (
+                  slugArray.map((slug, index) => {
+                    // Build the cumulative path dynamically
+                    const cumulativePath = slugArray.slice(0, index + 1).join("/");
+
+                    return (
+                      <div key={index} className="flex items-center pb-2 pt-0">
+                        <BreadcrumbItem className="hidden md:block flex items-center pr-1">
+                          <BreadcrumbLink href={`/categories/${cumulativePath}`}>
+                            {decodeURIComponent(slug)}
+                          </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        {index < slugArray.length - 1 && (
+                          <BreadcrumbSeparator className="hidden md:block" />
+                        )}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>No breadcrumbs available</BreadcrumbPage>
+                  </BreadcrumbItem>
                 )}
-                </BreadcrumbList>
+              </BreadcrumbList>
               </Breadcrumb>
               </div>
               <Category className="bg-white dark:bg-black" category={category}/>
@@ -205,10 +222,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       </div>
     );
   }else{
-    const client = await clientPromise;
-
-    const db = client.db('Site_Data'); // Replace with your actual DB name
-    const collection = await db.collection('category_data')
+    
       // Get the last element in the slug array or default to an empty string
     const documents = await collection.find({}).toArray();
 
@@ -235,7 +249,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
     return (
         <SidebarProvider>
-          <AppSidebar className=""/>
+          <AppSidebar categories={categoryNames}/>
             <div className="absolute top-0 left-0 z-50 p-2">
               <SidebarTrigger className="ml-1 bg-white dark:bg-black text-suGold dark:text-white rounded-md shadow-md" />
             </div>
