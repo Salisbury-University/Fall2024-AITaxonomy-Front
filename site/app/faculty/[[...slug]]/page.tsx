@@ -46,31 +46,31 @@ export default async function Page({ params }: PageProps) {
     const db = client.db('Site_Data'); // Replace with your actual DB name
     const collection = await db.collection('faculty_data')
     // Get the last element in the slug array or default to an empty string
-    const slug = resolvedParams.slug ? resolvedParams.slug[resolvedParams.slug.length - 1] : '';
+    const slug: String = resolvedParams.slug ? resolvedParams.slug[resolvedParams.slug.length - 1] : '';
 
     
-    const documents = await collection.find({"_id": slug}).toArray();
+    const document = await collection.findOne({"_id": slug});
 
-
-    if (documents.length === 0) return <p>Data not found</p>;
+    if (!document) {
+        return <h1>Faculty Not found</h1>
+    }
     // Transform documents to CategoryInfo type
     const faculty: CrossrefFacultyDetails = {
-
-      name: documents[0].name,
-      tc_count: documents[0].tc_count,
-      department_affiliations: documents[0].department_affiliations,
-      dois: documents[0].dois,
-      titles: documents[0].titles,
-      categories: documents[0].categories,
-      top_level_categories: documents[0].top_level_categories,
-      mid_level_categories: documents[0].mid_level_categories,
-      low_level_categories: documents[0].low_level_categories,
-      category_urls: documents[0].category_urls,
-      top_category_urls: documents[0].top_category_urls,
-      mid_category_urls: documents[0].mid_category_urls,
-      low_category_urls: documents[0].low_category_urls,
-      themes: documents[0].themes,
-      journal: documents[0].journal,
+      name: document.name,
+      tc_count: document.tc_count,
+      department_affiliations: document.department_affiliations,
+      dois: document.dois,
+      titles: document.titles,
+      categories: document.categories,
+      top_level_categories: document.top_level_categories,
+      mid_level_categories: document.mid_level_categories,
+      low_level_categories: document.low_level_categories,
+      category_urls: document.category_urls,
+      top_category_urls: document.top_category_urls,
+      mid_category_urls: document.mid_category_urls,
+      low_category_urls: document.low_category_urls,
+      themes: document.themes,
+      journal: document.journal,
     };
     return (
       <div className="min-h-screen bg-suGray dark:bg-black text-black dark:text-white">
