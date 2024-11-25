@@ -27,18 +27,18 @@ interface CategoryInfo {
      *     citation_average (number): The average number of citations per article.
      *     doi_list (Set<string>): A set of DOIs associated with this category.
      */
-    url: String;
-    category_name: String,
+    url: string;
+    category_name: string,
     faculty_count: number;
     department_count: number;
     article_count: number;
-    faculty: String[];
-    departments: String[];
-    titles: String[];
+    faculty: string[];
+    departments: string[];
+    titles: string[];
     tc_count: number;
     citation_average: number;
-    doi_list: String[];
-    themes: String[]
+    doi_list: string[];
+    themes: string[]
 }
 
 interface CategoryProps {
@@ -47,9 +47,10 @@ interface CategoryProps {
 }
 
 export function Category({ className, category }: CategoryProps) {
+      
+
     return (
         <div className={"w-full"+className}>
-        
         
          <h1 className="text-3xl font-bold mb-4 text-center text-black dark:text-white">{category.category_name}</h1>
          <div className="flex flex-col gap-4 h-full">
@@ -67,98 +68,89 @@ export function Category({ className, category }: CategoryProps) {
                                 <p className="text-base text-gray-700 dark:text-white mb-2">Citation Average: {category.citation_average}</p>
                             </div>
                         </div>
-                        <div className="flex justify-center items-center rounded-xl text-center bg-white dark:bg-suMaroon shadow-md row-span-1">
-                            {/* <div className="mb-6">
-                                <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Faculty Members</h2>
-                                <div className="grid grid-flow-col auto-rows-max gap-x-4">
-                                    {Array.from({ length: Math.ceil(category.faculty.length / 6) }, (_, columnIndex) => (
-                                        <ul key={columnIndex} className="list-disc list-inside">
+                        <div className="relative flex justify-center items-center rounded-xl text-center bg-white dark:bg-suMaroon shadow-md row-span-1">
+                            {/* Constrain the carousel width for mobile and desktop */}
+                            <Carousel className="relative w-full max-w-full md:max-w-xs m-5">
+                                <CarouselContent>
+                                {Array.from({ length: Math.ceil(category.faculty.length / 10) }).map((_, index) => (
+                                    <CarouselItem key={index}>
+                                    <div className="p-5">
+                                        <div className="rounded-lg bg-white dark:bg-suMaroon p-4 md:p-2">
+                                        <h1 className="text-xl md:text-2xl font-semibold mb-2 text-black dark:text-white">
+                                            Faculty
+                                        </h1>
+                                        <ul className="space-y-1">
                                             {category.faculty
-                                                .slice(columnIndex * 6, columnIndex * 6 + 6)
-                                                .map((faculty, index) => (
-                                                    <li key={index} className="text-base text-gray-700 dark:text-white">
-                                                        {faculty}
-                                                    </li>
+                                            .slice(index * 10, index * 10 + 10)
+                                            .map((item, facIndex) => (
+                                                <li key={facIndex} className="text-black dark:text-white">
+                                                <Link
+                                                    href={"/faculty/" + item.toLowerCase().replaceAll(" ", "-")}
+                                                    className="hover:underline"
+                                                >
+                                                    {item}
+                                                </Link>
+                                                </li>
                                             ))}
                                         </ul>
-                                    ))}
-                                </div>
-                            </div> */}
-                            <Carousel className="w-full max-w-xs md:m-10">
-                                <CarouselContent>
-                                    {Array.from({ length: category.departments.length / 10 }).map((_, index) => (
-                                    <CarouselItem key={index}>
-                                        <div className="p-5">
-                                        <div className="rounded-lg bg-white dark:bg-suMaroon p-10 md:p-2">
-                                            <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Faculty</h1>
-                                            <ul className="h-full w-full">
-                                                {category.faculty.slice(index * 10, index * 10 + 10).map((faculty, index) => (
-                                                    <li key={index} className="text-black dark:text-white">
-                                                        { faculty }
+                                        </div>
+                                    </div>
+                                    </CarouselItem>
+                                ))}
+                                </CarouselContent>
+
+                                {/* Buttons */}
+                                <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 text-white rounded-full p-2 md:p-3 bg-red-600 hover:bg-red-100 border-none hover:border-black" />
+                                <CarouselNext className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 text-white rounded-full p-2 md:p-3 bg-red-600 hover:bg-red-100 border-none hover:border-black"/>
+                            </Carousel>
+                            </div>
+
+
+
+                            <div className="relative flex justify-center items-center rounded-xl text-center bg-white dark:bg-suMaroon p-4 md:p-12 dark:border-white">
+                                <Carousel className="relative w-full max-w-full md:max-w-md m-5">
+                                    <CarouselContent>
+                                    {Array.from({ length: Math.ceil(category.themes.length / 10) }).map((_, index) => (
+                                        <CarouselItem key={index}>
+                                        <div className="p-4 md:p-5">
+                                            <div className="rounded-lg bg-white dark:bg-suMaroon p-4 md:p-6">
+                                            <h1 className="text-xl md:text-2xl font-semibold mb-2 text-black dark:text-white">
+                                                Themes
+                                            </h1>
+                                            <ul className="space-y-1">
+                                                {category.themes
+                                                .slice(index * 10, index * 10 + 10)
+                                                .map((theme, themeIndex) => (
+                                                    <li key={themeIndex} className="text-black dark:text-white">
+                                                    {theme}
                                                     </li>
                                                 ))}
                                             </ul>
-                                        </div>
-                                        </div>
-                                    </CarouselItem>
-                                    ))}
-                                </CarouselContent>
-                                <CarouselPrevious />
-                                <CarouselNext />
-                            </Carousel>
-                        </div>
-
-                        <div className=" grid md:grid-rows-subgrid md:row-span-2 max-w-lg rounded-xl bg-white dark:bg-suMaroon p-12 rounded-lg dark:border-white">
-                                <Carousel className="w-full max-w-xs md:m-10 md:col-start-3">
-                                    <CarouselContent>
-                                        {Array.from({ length: category.themes.length / 10 }).map((_, index) => (
-                                        <CarouselItem key={index}>
-                                            <div className="p-5">
-                                            <div className="rounded-lg bg-white dark:bg-suMaroon p-10 md:p-2">
-                                                <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Themes</h1>
-                                                <ul className="list-disc h-full w-full">
-                                                    {category.themes.slice(index * 10, index * 10 + 10).map((theme, index) => (
-                                                        <li key={index} className="text-black dark:text-white">
-                                                            {theme}
-                                                        </li>
-                                                    ))}
-                                                </ul>
                                             </div>
-                                            </div>
+                                        </div>
                                         </CarouselItem>
-                                        ))}
+                                    ))}
                                     </CarouselContent>
-                                    <CarouselPrevious />
-                                    <CarouselNext />
+                                    <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 text-white rounded-full p-2 md:p-3 bg-red-600 hover:bg-red-100 border-none hover:border-black" />
+                                <CarouselNext className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 text-white rounded-full p-2 md:p-3 bg-red-600 hover:bg-red-100 border-none hover:border-black"/>
                                 </Carousel>
-                                
-                        </div>
+                            </div>
+
+
                 
             
             
-                        <div className="flex justify-center items-center rounded-xl bg-white dark:bg-suMaroon p-4 overflow-scroll dark:border-white">
-                            {/* <div className="rounded-lg bg-white dark:bg-suMaroon p-2">
-                                <h1 className="text-2xl font-semibold text-black dark:text-white mb-4">Articles</h1>
-                                <ul className="space-y-2 list-disc">
-                                    {category.titles.map((title, index) => (
-                                    <li key={index} className="text-black dark:text-white">
-                                        
-                                        <Link href={"/article/"+ category.doi_list[index].replace('/', '-')} className="hover:underline">
-                                            { title }
-                                        </Link>
-                                    </li>
-                                ))}
-                                </ul>
-                            </div> */}
-                            <Carousel className="w-full max-w-xs md:m-10">
+                        <div className="relative flex justify-center items-center rounded-xl text-center bg-white dark:bg-suMaroon p-4 md:p-12 dark:border-white">
+                            
+                            <Carousel className="relative w-full max-w-full md:max-w-md m-5">
                                 <CarouselContent>
-                                    {Array.from({ length: category.titles.length / 10 }).map((_, index) => (
+                                    {Array.from({ length: Math.ceil(category.titles.length / 10) }).map((_, index) => (
                                     <CarouselItem key={index}>
-                                        <div className="p-5">
-                                        <div className="rounded-lg bg-white dark:bg-suMaroon p-10 md:p-2">
-                                            <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Articles</h1>
-                                            <ul className="list-disc h-full w-full">
-                                                {category.titles.slice(index * 10, index * 10 + 10).map((title, index) => (
+                                        <div className="p-4 md:p-5">
+                                        <div className="rounded-lg bg-white dark:bg-suMaroon p-4 md:p-6">
+                                            <h1 className="text-xl md:text-2xl font-semibold mb-2 text-black dark:text-white">Articles</h1>
+                                            <ul className="space-y-1">
+                                                {category.titles.slice(index * 5, index * 5 + 5).map((title, index) => (
                                                     <li key={index} className="text-black dark:text-white">
                                         
                                                     <Link href={"/article/"+ category.doi_list[index].replace('/', '-')} className="hover:underline">
@@ -172,32 +164,32 @@ export function Category({ className, category }: CategoryProps) {
                                     </CarouselItem>
                                     ))}
                                 </CarouselContent>
-                                <CarouselPrevious />
-                                <CarouselNext />
+                                <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 text-white rounded-full p-2 md:p-3 bg-red-600 hover:bg-red-100 border-none hover:border-black" />
+                                <CarouselNext className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 text-white rounded-full p-2 md:p-3 bg-red-600 hover:bg-red-100 border-none hover:border-black"/>
                             </Carousel>
                         </div>
 
-                        <div className="flex justify-center items-center w-full h-auto p-4 rounded-xl bg-white dark:bg-suMaroon">
+                        <div className="relative flex justify-center items-center rounded-xl bg-white dark:bg-suMaroon p-4 md:p-12 ">
 
 
-                            <Carousel className="w-full max-w-xs md:m-10">
+                            <Carousel className="relative w-full max-w-full md:max-w-md m-5">
                                 <CarouselContent>
-                                    {Array.from({ length: category.departments.length / 10 }).map((_, index) => (
+                                    {Array.from({ length:  Math.ceil(category.departments.length / 10) }).map((_, index) => (
                                     <CarouselItem key={index}>
-                                        <div className="p-5">
-                                        <div className="rounded-lg bg-white dark:bg-suMaroon p-10 md:p-2">
-                                            <h1 className="text-2xl font-semibold mb-2 text-black dark:text-white">Departments</h1>
-                                            <ul className="list-disc h-full w-full">
-                                                {category.departments.slice(index * 10, index * 10 + 10).map((department, index) => {
-                                                    if (department.toLowerCase().includes("salisbury university")) {
-                                                        const trimmed = department.split(",")[0][0];
-                                                        return (
-                                                            <li key={index} className="text-black dark:text-white w-full">
-                                                                {trimmed}
-                                                            </li>
-                                                        );
-                                                    }
-                                                    return null; // Skip rendering if the condition is not met
+                                        <div className="p-4 md:p-5">
+                                        <div className="rounded-lg bg-white dark:bg-suMaroon p-4 md:p-6">
+                                            <h1 className="text-xl md:text-2xl font-semibold mb-2 text-black dark:text-white">Departments</h1>
+                                            <ul className="space-y-1">
+                                                {category.departments
+                                                .filter(department => department.toLowerCase().includes("salisbury university"))
+                                                .slice(index * 5, index * 5 + 5)
+                                                .map((department, index) => {
+                                                    const trimmed = department.split(",")[0];
+                                                    return (
+                                                        <li key={index} className="text-black dark:text-white">
+                                                            {department}
+                                                        </li>
+                                                    );
                                                 })}
                                             </ul>
                                         </div>
@@ -205,8 +197,8 @@ export function Category({ className, category }: CategoryProps) {
                                     </CarouselItem>
                                     ))}
                                 </CarouselContent>
-                                <CarouselPrevious />
-                                <CarouselNext />
+                                <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 text-white rounded-full p-2 md:p-3 bg-red-600 hover:bg-red-100 border-none hover:border-black" />
+                                <CarouselNext className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 text-white rounded-full p-2 md:p-3 bg-red-600 hover:bg-red-100 border-none hover:border-black"/>
                             </Carousel>
                         </div>
 

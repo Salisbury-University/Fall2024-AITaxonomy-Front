@@ -89,10 +89,10 @@ export default async function Page() {
 
       
       <div className="grid grid-cols-3 gap-4 p-4">
-        <div className="container bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div className="flex flex-col justify-center items-center bg-white dark:bg-gray-800 rounded-lg shadow-md">
           <Carousel className="w-full max-w-xs md:m-10">
             <CarouselContent>
-              {Array.from({ length: newData.length / 5}).map((_, index) => (
+              {Array.from({ length: Math.ceil(newData.length / 5)}).map((_, index) => (
                 <CarouselItem key={index}>
               
                   <h1>Faculty Per Category</h1>

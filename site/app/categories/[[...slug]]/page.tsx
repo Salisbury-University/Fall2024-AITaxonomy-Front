@@ -19,7 +19,30 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Int32 } from 'mongodb';
 
+interface CrossrefArticleDetails {
+  /**
+   * An interface representing details about an individual article.
+   *
+   * Attributes:
+   *     tc_count (number): Total citation count for the article.
+   *     faculty_members (string[]): List of faculty members associated with the article.
+   *     faculty_affiliations (Record<string, string[]>): Mapping of faculty members to their affiliations.
+   */
+  title: string[];
+  tc_count: number;
+  faculty_members: string[];
+  faculty_affiliations: Record<string, string>;
+  abstract: string;
+  date_published_print: string;
+  journal: string;
+  download_url: string;
+  doi: string;
+  themes: string[];
+  categories: string[];
+  category_urls: string[];
+}
 
 interface CategoryInfo {
     /**
@@ -39,18 +62,18 @@ interface CategoryInfo {
      *     citation_average (number): The average number of citations per article.
      *     doi_list (Set<string>): A set of DOIs associated with this category.
      */
-    url: String;
-    category_name: String,
+    url: string;
+    category_name: string,
     faculty_count: number;
     department_count: number;
     article_count: number;
-    faculty: String[];
-    departments: String[];
-    titles: String[];
+    faculty: string[];
+    departments: string[];
+    titles: string[];
     tc_count: number;
     citation_average: number;
-    doi_list: String[];
-    themes: String[]
+    doi_list: string[];
+    themes: string[]
     
 }
 
@@ -59,6 +82,42 @@ interface CategoryPageProps {
     slug?: string[];
   }>;
 }
+
+interface doiProps {
+  get_doi: string;
+  avg: number;
+}
+interface Article {
+  url: string;
+  doi: string;
+  tc_count: number;
+}
+
+async function get_most_cited(doiList: string[], avg: number) {
+  const client = await clientPromise;
+  const db = client.db('Site_Data'); // Replace with your actual DB name
+  const collection = db.collection('article_data');
+
+  // Fetch all articles matching the list of DOIs
+  const articles = await collection.find({"url": { $in : doiList}}).toArray();
+  if (articles.length === 0) {
+    return null; // No articles found
+  }
+
+  // Find the most cited article (above average citations, if specified)
+  let mostCited = articles[0];
+  for (const article of articles) {
+    if (
+      article.tc_count > mostCited.tc_count ||
+      (article.tc_count === mostCited.tc_count && doiList.indexOf(article.doi) < doiList.indexOf(mostCited.doi))
+    ) {
+      mostCited = article;
+    }
+  }
+  
+  return mostCited.title;
+}
+
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const resolvedParams = await params;
@@ -69,9 +128,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   // Display content based on the category level
   let title = '';
   if (lowLevelCategory) {
-    title = lowLevelCategory;
+    title = topLevelCategory+"/"+midLevelCategory+"/"+lowLevelCategory;
   } else if (midLevelCategory) {
-    title = midLevelCategory;
+    title = topLevelCategory+"/"+midLevelCategory;
   } else if (topLevelCategory) {
     title = topLevelCategory;
   } else {
@@ -146,6 +205,33 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       </div>
     );
   }else{
+    const client = await clientPromise;
+
+    const db = client.db('Site_Data'); // Replace with your actual DB name
+    const collection = await db.collection('category_data')
+      // Get the last element in the slug array or default to an empty string
+    const documents = await collection.find({}).toArray();
+
+
+    if (documents.length === 0) return <p>Data not found</p>;
+    // Transform documents to CategoryInfo type
+    const categories: CategoryInfo [] = documents.map((document) => ({
+        url: document.url,
+        category_name: document.category_name,
+        faculty_count: document.faculty_count,
+        department_count: document.department_count,
+        article_count: document.article_count,
+        faculty: document.faculty,
+        departments: document.departments,
+        titles: document.titles,
+        tc_count: document.tc_count,
+        citation_average: document.citation_average,
+        doi_list: document.doi_list,
+        themes: document.themes
+    
+    }));
+
+    
 
     return (
         <SidebarProvider>
@@ -157,9 +243,20 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <Header/>
             <main className="bg-white dark:bg-black">
             <div className="flex flex-1 flex-col gap-4 p-4">
-              <div className="grid auto-rows-min gap-4 md:grid-cols-5">
-                {Array.from({ length: 20 }).map((_, i) => (
-                  <div key={i} className="aspect-square rounded-xl bg-muted/50" />
+              <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+                {categories.map((category, index) => (
+                  <div key={index} className="flex flex-col justify-center items-center text-center aspect-square rounded-xl bg-muted/50 p-12" >
+                    <h1 className="font-bold p-4">{category.category_name}</h1>
+                    <div className="space-y-2">
+                      <p>Faculty Count: {category.faculty_count}</p>
+                      <p>Department Count: {category.department_count}</p>
+                      <p>Article Count: {category.article_count}</p>
+                      <p>Total Citations: {category.tc_count}</p>
+                      <p>Citation Average: {Math.round(category.citation_average)}</p>
+                      <p className="font-semibold text-xl">Most Cited Article</p>
+                      <p className="font-semibold">{get_most_cited(category.doi_list, category.citation_average)}</p>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

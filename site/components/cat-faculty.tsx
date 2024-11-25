@@ -11,6 +11,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { data } from "autoprefixer";
 
 const chartConfig = {
   Faculty: {
@@ -32,19 +33,22 @@ interface catFacultyProps {
 export function CategoryFaculty({ data }:catFacultyProps) {
 
   return (
-    <ChartContainer config={chartConfig} className="min-h-full w-full dark:text-white">
-        <BarChart accessibilityLayer data={data} >
-          <CartesianGrid vertical={false} />
-          <XAxis
-              dataKey="category"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value: string)=> value.slice(0, 3)}
-            />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="faculty" fill="var(--color-Faculty)" radius={4}/>
-        </BarChart>
-    </ChartContainer>
+    <div>
+      <ChartContainer config={chartConfig} className="min-h-full w-full text-black dark:text-white">
+          <BarChart accessibilityLayer data={data} >
+            <CartesianGrid vertical={false} />
+            <XAxis
+                dataKey="category"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                tickFormatter={(value: string)=> value.slice(0, 3)}
+                tick={{fontSize: 12}}
+              />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="faculty" fill="var(--color-Faculty)" radius={4}/>
+          </BarChart>
+      </ChartContainer>
+    </div>
   );
 }
