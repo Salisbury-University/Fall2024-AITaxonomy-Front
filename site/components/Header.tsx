@@ -13,6 +13,9 @@ export function Header() {
             <FontAwesomeIcon icon={ faGraduationCap } className="mr-2 h-8 w-8 text-white" />
         </Link>
         <nav className="hidden md:flex items-center space-x-6 text-white">
+          <Link title="Home" href="/" className="hover:underline">
+            Home
+          </Link>
           <Link title="Visualizations" href="/visualizations" className="hover:underline">
             Visualizations
           </Link>
