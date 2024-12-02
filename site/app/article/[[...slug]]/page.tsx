@@ -62,9 +62,9 @@ export default async function Page({ params }: PageProps) {
           category_urls: documents[0].category_urls,
       };
       return (
-          <div className="min-h-screen bg-suGray dark:bg-black text-black dark:text-white">
+          <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
           <Header/>
-          <div className="container mx-auto text-center bg-suMaroon">
+          <div className="container mx-auto text-center dark:bg-suMaroon">
               <h1 className="text-2xl font-bold">Research Article</h1>
           </div>
     
@@ -134,7 +134,7 @@ export default async function Page({ params }: PageProps) {
                   <li key={index}>
                     <Link
                       href={`/categories/${article.category_urls[index]}`}
-                      className="text-suGold hover:underline"
+                      className="text-black dark:text-suGold hover:underline hover:text-suGold"
                     >
                       {category}
                     </Link>

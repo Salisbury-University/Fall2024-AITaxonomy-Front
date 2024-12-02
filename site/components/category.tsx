@@ -58,24 +58,24 @@ export function Category({ className, category }: CategoryProps) {
                     
                         {/* Center Content */}
                         
-                        <div className="flex justify-center items-center rounded-xl p-4 overflow-y-auto bg-white dark:bg-suMaroon shadow-md text-center row-span-1">
+                        <div className="flex justify-center items-center rounded-xl p-4 overflow-y-auto bg-suGray/20 dark:bg-suMaroon hover:bg-suGray/25 dark:hover:bg-suMaroon/55 shadow-md text-center row-span-1">
                             <div className="max-w-4xl mx-auto p-1">
                                 <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Statistics</h2>
                                 <p className="text-base text-gray-700 dark:text-white mb-2">Faculty Count: {category.faculty_count}</p>
                                 <p className="text-base text-gray-700 dark:text-white mb-2">Department Count: {category.department_count}</p>
                                 <p className="text-base text-gray-700 dark:text-white mb-2">Article Count: {category.article_count}</p>
                                 <p className="text-base text-gray-700 dark:text-white mb-2">Total Citations: {category.tc_count}</p>
-                                <p className="text-base text-gray-700 dark:text-white mb-2">Citation Average: {category.citation_average}</p>
+                                <p className="text-base text-gray-700 dark:text-white mb-2">Citation Average: {Math.floor(category.citation_average)}</p>
                             </div>
                         </div>
-                        <div className="relative flex justify-center items-center rounded-xl text-center bg-white dark:bg-suMaroon shadow-md row-span-1">
+                        <div className="relative flex justify-center items-center rounded-xl text-center bg-suGray/20 dark:bg-suMaroon hover:bg-suGray/25 dark:hover:bg-suMaroon/55 shadow-md row-span-1">
                             {/* Constrain the carousel width for mobile and desktop */}
                             <Carousel className="relative w-full max-w-full md:max-w-xs m-5">
                                 <CarouselContent>
                                 {Array.from({ length: Math.ceil(category.faculty.length / 10) }).map((_, index) => (
                                     <CarouselItem key={index}>
                                     <div className="p-5">
-                                        <div className="rounded-lg bg-white dark:bg-suMaroon p-4 md:p-2">
+                                        <div className="rounded-lg p-4 md:p-2">
                                         <h1 className="text-xl md:text-2xl font-semibold mb-2 text-black dark:text-white">
                                             Faculty
                                         </h1>
@@ -107,13 +107,13 @@ export function Category({ className, category }: CategoryProps) {
 
 
 
-                            <div className="relative flex justify-center items-center rounded-xl text-center bg-white dark:bg-suMaroon p-4 md:p-12 dark:border-white">
+                            <div className="relative flex justify-center items-center rounded-xl text-center bg-suGray/20 dark:bg-suMaroon hover:bg-suGray/25 dark:hover:bg-suMaroon/55 p-4 md:p-12 dark:border-white">
                                 <Carousel className="relative w-full max-w-full md:max-w-md m-5">
                                     <CarouselContent>
                                     {Array.from({ length: Math.ceil(category.themes.length / 10) }).map((_, index) => (
                                         <CarouselItem key={index}>
                                         <div className="p-4 md:p-5">
-                                            <div className="rounded-lg bg-white dark:bg-suMaroon p-4 md:p-6">
+                                            <div className="rounded-lg p-4 md:p-6">
                                             <h1 className="text-xl md:text-2xl font-semibold mb-2 text-black dark:text-white">
                                                 Themes
                                             </h1>
@@ -140,14 +140,14 @@ export function Category({ className, category }: CategoryProps) {
                 
             
             
-                        <div className="relative flex justify-center items-center rounded-xl text-center bg-white dark:bg-suMaroon p-4 md:p-12 dark:border-white">
+                        <div className="relative flex justify-center items-center rounded-xl text-center bg-suGray/20 dark:bg-suMaroon hover:bg-suGray/25 dark:hover:bg-suMaroon/55 p-4 md:p-12 dark:border-white">
                             
                             <Carousel className="relative w-full max-w-full md:max-w-md m-5">
                                 <CarouselContent>
                                     {Array.from({ length: Math.ceil(category.titles.length / 10) }).map((_, index) => (
                                     <CarouselItem key={index}>
                                         <div className="p-4 md:p-5">
-                                        <div className="rounded-lg bg-white dark:bg-suMaroon p-4 md:p-6">
+                                        <div className="rounded-lg p-4 md:p-6">
                                             <h1 className="text-xl md:text-2xl font-semibold mb-2 text-black dark:text-white">Articles</h1>
                                             <ul className="space-y-1">
                                                 {category.titles.slice(index * 5, index * 5 + 5).map((title, index) => (
@@ -169,15 +169,19 @@ export function Category({ className, category }: CategoryProps) {
                             </Carousel>
                         </div>
 
-                        <div className="relative flex justify-center items-center rounded-xl bg-white dark:bg-suMaroon p-4 md:p-12 ">
+                        <div className="relative flex justify-center items-center rounded-xl bg-suGray/20 dark:bg-suMaroon hover:bg-suGray/25 dark:hover:bg-suMaroon/55 p-4 md:p-12 ">
 
 
                             <Carousel className="relative w-full max-w-full md:max-w-md m-5">
                                 <CarouselContent>
-                                    {Array.from({ length:  Math.ceil(category.departments.length / 10) }).map((_, index) => (
+                                    {Array.from({ 
+                                        length:  
+                                        Math.ceil(category.departments
+                                            .filter(department => department.toLowerCase().includes("salisbury university"))
+                                            .length / 10) }).map((_, index) => (
                                     <CarouselItem key={index}>
                                         <div className="p-4 md:p-5">
-                                        <div className="rounded-lg bg-white dark:bg-suMaroon p-4 md:p-6">
+                                        <div className="rounded-lg p-4 md:p-6">
                                             <h1 className="text-xl md:text-2xl font-semibold mb-2 text-black dark:text-white">Departments</h1>
                                             <ul className="space-y-1">
                                                 {category.departments

@@ -73,10 +73,10 @@ export default async function Page({ params }: PageProps) {
       journal: document.journal,
     };
     return (
-      <div className="min-h-screen bg-suGray dark:bg-black text-black dark:text-white">
+      <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
           <Header />
-          <div className="container mx-auto text-center bg-suMaroon">
-              <h1 className="text-2xl font-bold">Faculty</h1>
+          <div className="container mx-auto text-center bg-white dark:bg-suMaroon">
+              <h1 className="text-2xl font-bold text-suMaroon dark:text-white">Faculty</h1>
           </div>
   
           {/* Content */}
@@ -88,17 +88,21 @@ export default async function Page({ params }: PageProps) {
                   <p className="text-gray-700 dark:text-gray-300">
                       <strong>Journal:</strong> {faculty.journal}
                   </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                      <strong>DOI:</strong>{' '}
-                      <a
-                          href={`https://doi.org/${faculty.dois[0]}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-suGold hover:underline"
-                      >
-                          {faculty.dois[0]}
-                      </a>
-                  </p>
+                  <h3>DOI: </h3>
+                  <ul className="text-gray-700 dark:text-gray-300">
+                    {faculty.dois.map((doi, index) => (
+                      <li key={index}>
+                        <Link
+                            href={`https://doi.org/${doi}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-suGold hover:underline"
+                        >
+                            {doi}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
               </div>
   
               {/* Department Affiliations */}
@@ -133,7 +137,7 @@ export default async function Page({ params }: PageProps) {
                           <li key={index}>
                               <Link
                                   href={`/categories/${faculty.category_urls[index]}`}
-                                  className="text-suGold hover:underline"
+                                  className="text-black dark:text-suGold hover:underline"
                               >
                                   {category}
                               </Link>

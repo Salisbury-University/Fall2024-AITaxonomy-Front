@@ -1,4 +1,7 @@
-import * as React from "react"
+"use client"
+import * as React from "react";
+import { useState } from "react";
+import { useMemo } from "react";
 import { ChevronRight } from "lucide-react"
 import Link from 'next/link'
 import { SearchForm } from "@/components/search-form"
@@ -21,7 +24,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { title } from "process"
+
 
 interface TaxonomyItem {
     name: string;
@@ -34,8 +37,19 @@ interface TaxonomyItem {
     items?: NavItem[];
   }
   
-  interface DataStructure {
-    navMain: NavItem[];
+interface DataStructure {
+    navMain: {
+      title: string
+      url: string
+      items: {
+        title: string
+        url: string
+        items: {
+          title: string
+          url: string
+        }[]
+      }[]
+    }[]
   }
   
 
@@ -78,10 +92,10 @@ const taxonomy = [
                 "Computational biology",
                 "Bioinformatics, biostatistics, and computational biology nec"
             ],
-            "Cell/ cellular biology and anatomy": [
-                "Cell/ cellular and molecular biology",
+            "Cell cellular biology and anatomy": [
+                "Cell cellular and molecular biology",
                 "Developmental biology and embryology",
-                "Cell/ cellular biology and anatomy nec"
+                "Cell cellular biology and anatomy nec"
             ],
             "Ecology, evolutionary biology, and epidemiology": [
                 "Ecology",
@@ -94,7 +108,7 @@ const taxonomy = [
             "Genetics and genomics": [
                 "Genetics, general",
                 "Genome sciences and genomics",
-                "Human/ medical genetics",
+                "Human medical genetics",
                 "Molecular genetics",
                 "Genetics nec"
             ],
@@ -124,7 +138,7 @@ const taxonomy = [
                 "Physiology, oncology and cancer biology nec"
             ],
             "Biological and biomedical sciences, other": [
-                "Biology/ biological sciences, general",
+                "Biology biological sciences, general",
                 "Biomedical sciences, general",
                 "Botany and plant biology",
                 "Entomology",
@@ -146,7 +160,7 @@ const taxonomy = [
                 "Computer and information sciences, general",
                 "Computer systems networking and telecommunications",
                 "Informatics and information technology",
-                "Information science/ studies",
+                "Information science studies",
                 "Computer and information sciences nec"
             ]
         }
@@ -166,7 +180,7 @@ const taxonomy = [
             ],
             "Civil, environmental, and transportation engineering": [
                 "Civil engineering",
-                "Environmental/ environmental health engineering",
+                "Environmental environmental health engineering",
                 "Geotechnical and geoenvironmental engineering",
                 "Structural engineering",
                 "Transportation and highway engineering",
@@ -212,12 +226,12 @@ const taxonomy = [
             "Geological and earth sciences": [
                 "Geochemistry",
                 "Geology",
-                "Geology/ earth science, general",
+                "Geology earth science, general",
                 "Geophysics and seismology",
                 "Hydrology and water resources science",
                 "Geological and earth sciences nec"
             ],
-            "Ocean/ marine sciences and atmospheric science": [
+            "Ocean marine sciences and atmospheric science": [
                 "Atmospheric sciences and meteorology, general",
                 "Climatology, atmospheric chemistry and physics",
                 "Marine biology and biological oceanography",
@@ -243,7 +257,7 @@ const taxonomy = [
             "Public health": [
                 "Environmental health",
                 "Health services research",
-                "Health/ medical physics",
+                "Health medical physics",
                 "Public health education and promotion",
                 "Public health, general",
                 "Public health nec"
@@ -252,7 +266,7 @@ const taxonomy = [
                 "Communication disorders sciences",
                 "Exercise science and kinesiology",
                 "Health sciences, general",
-                "Marriage and family therapy/ counseling",
+                "Marriage and family therapy counseling",
                 "Medical clinical science",
                 "Medical, biomedical, and health informatics",
                 "Mental health, counseling, and therapy services and sciences",
@@ -283,21 +297,21 @@ const taxonomy = [
         }
     },
     {
-        name: "Multidisciplinary/ interdisciplinary sciences",
+        name: "Multidisciplinary interdisciplinary sciences",
         subCategories: {
             "Interdisciplinary computer sciences": [
                 "Computer science and engineering",
                 "Electrical engineering and computer science",
                 "Interdisciplinary computer sciences nec"
             ],
-            "Multidisciplinary/ interdisciplinary sciences, other": [
+            "Multidisciplinary interdisciplinary sciences, other": [
                 "Behavioral and cognitive sciences",
                 "Computational science and engineering",
                 "Data science and data analytics",
-                "History/ philosophy of science, technology and society",
-                "Nanoscience/ nanoscale science",
+                "History philosophy of science, technology and society",
+                "Nanoscience nanoscale science",
                 "Nutrition sciences",
-                "Multidisciplinary/ interdisciplinary sciences nec"
+                "Multidisciplinary interdisciplinary sciences nec"
             ]
         }
     },
@@ -326,11 +340,11 @@ const taxonomy = [
             ],
             "Physics": [
                 "Applied physics",
-                "Atomic/ molecular physics",
+                "Atomic molecular physics",
                 "Condensed matter and materials physics",
                 "Elementary particle physics",
                 "Nuclear physics",
-                "Optics/ optical sciences",
+                "Optics optical sciences",
                 "Physics and astronomy",
                 "Physics, general",
                 "Plasma and high-temperature physics",
@@ -389,7 +403,7 @@ const taxonomy = [
                 "Development economics and international development",
                 "Econometrics and quantitative economics",
                 "Economics, general",
-                "Environmental/ natural resource economics",
+                "Environmental natural resource economics",
                 "Economics nec"
             ],
             "Political science and government": [
@@ -448,7 +462,7 @@ const taxonomy = [
             "Education research": [
                 "Curriculum and instruction",
                 "Educational assessment, evaluation, and research methods",
-                "Educational/ instructional technology and media design",
+                "Educational instructional technology and media design",
                 "Higher education evaluation and research",
                 "Student counseling and personnel services",
                 "Education research nec"
@@ -483,7 +497,7 @@ const taxonomy = [
             ],
             "Foreign languages, literatures, and linguistics": [
                 "Comparative literature",
-                "Hispanic/ Latin American languages, literatures, and linguistics",
+                "Hispanic Latin American languages, literatures, and linguistics",
                 "Romance languages, literatures, and linguistics",
                 "Spanish language and literature",
                 "Foreign languages, literatures, and linguistics nec"
@@ -497,11 +511,11 @@ const taxonomy = [
             ],
             "Philosophy and religious studies": [
                 "Philosophy",
-                "Religion/ religious studies",
+                "Religion religious studies",
                 "Philosophy and religious studies nec"
             ],
             "Humanities, other": [
-                "Bible/ biblical studies",
+                "Bible biblical studies",
                 "Humanities and humanistic studies",
                 "Theological and ministerial studies"
             ]
@@ -520,7 +534,7 @@ const taxonomy = [
             "Visual arts, media studies, and design": [
                 "Art history, criticism and conservation",
                 "Film, cinema, and media studies",
-                "Visual arts, media studies/ design, and arts management nec"
+                "Visual arts, media studies design, and arts management nec"
             ]
         }
     },
@@ -531,12 +545,12 @@ const taxonomy = [
                 "Applied communication, advertising, and public relations",
                 "Communication and media studies",
                 "Communication, general",
-                "Mass communication/ media studies",
+                "Mass communication media studies",
                 "Communications and journalism nec"
             ],
-            "Multidisciplinary/ interdisciplinary studies": [
+            "Multidisciplinary interdisciplinary studies": [
                 "Classical and ancient studies",
-                "Multidisciplinary/ interdisciplinary studies nec"
+                "Multidisciplinary interdisciplinary studies nec"
             ],
             "Public administration and social services": [
                 "Public administration",
@@ -544,7 +558,7 @@ const taxonomy = [
             ],
             "Non-science and engineering, other": [
                 "Architecture and architectural studies",
-                "City/ urban, community, and regional planning",
+                "City urban, community, and regional planning",
                 "Family, consumer sciences and human sciences",
                 "Homeland security and protective services",
                 "Law, legal studies and research",
@@ -558,83 +572,26 @@ const taxonomy = [
 function convertString(str: string) {
     return encodeURIComponent(str);
 }
-
-
-
-interface sidebarProps extends React.ComponentProps<typeof Sidebar> {
-    categories: string[];
-}
-
-function buildCategoryTree(categories: string[]): Record<string, Record<string, string[]>> {
-    const result: Record<string, Record<string, string[]>> = {};
   
-    for (const categoryPath of categories) {
-      if (!categoryPath || typeof categoryPath !== 'string' || categoryPath.trim() === '') {
-        console.warn(`Skipping invalid or empty categoryPath: "${categoryPath}"`);
-        continue; // Skip invalid entries
-      }
-  
-      // Decode the URL-encoded category path
-      let decodedCategoryPath: string;
-      try {
-        decodedCategoryPath = decodeURIComponent(categoryPath);
-      } catch (error) {
-        console.error(`Error decoding categoryPath "${categoryPath}":`, error);
-        continue; // Skip entries that cannot be decoded
-      }
-  
-      const levels = decodedCategoryPath
-        .split('/')
-        .map((level) => level.trim())
-        .filter((level) => level !== '');
-  
-      if (levels.length === 0) {
-        console.warn(`Skipping categoryPath with no valid levels after decoding: "${categoryPath}"`);
-        continue;
-      }
-  
-      if (levels.length === 1) {
-        // Handle top-level category
-        const [topLevel] = levels;
-        if (!(topLevel in result)) {
-          result[topLevel] = {};
-        }
-      } else if (levels.length === 2) {
-        // Handle top-level and mid-level category
-        const [topLevel, midLevel] = levels;
-        if (!(topLevel in result)) {
-          result[topLevel] = {};
-        }
-        if (!(midLevel in result[topLevel])) {
-          result[topLevel][midLevel] = [];
-        }
-      } else if (levels.length >= 3) {
-        // Handle top-level, mid-level, and combined low-level category
-        const [topLevel, midLevel, ...lowLevelParts] = levels;
-        const lowLevel = lowLevelParts.join('/'); // Combine remaining parts into one string
-  
-        if (!(topLevel in result)) {
-          result[topLevel] = {};
-        }
-        if (!(midLevel in result[topLevel])) {
-          result[topLevel][midLevel] = [];
-        }
-        if (!result[topLevel][midLevel].includes(lowLevel)) {
-          result[topLevel][midLevel].push(lowLevel);
-        }
-      }
-    }
-  
-    return result;
+interface DataStructure {
+    navMain: {
+      title: string
+      url: string
+      items: {
+        title: string
+        url: string
+        items: {
+          title: string
+          url: string
+        }[]
+      }[]
+    }[]
   }
   
   
-  
-  
-  
-export function AppSidebar({ categories, ...props }: sidebarProps) {
-
-    const sidebarContent = buildCategoryTree(categories);
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const [searchQuery, setSearchQuery] = useState("")
+    // const sidebarContent = buildCategoryTree(categories);
     const data: DataStructure = {
         navMain: taxonomy.map((category) => ({
           title: category.name,
@@ -651,93 +608,45 @@ export function AppSidebar({ categories, ...props }: sidebarProps) {
           ),
         })),
       };
+
+      const filteredData = useMemo(() => {
+        if (!searchQuery) return data
+    
+        const filterItems = (items: any[]) =>
+          items.filter((item) =>
+            item.title.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+    
+        return {
+          navMain: data.navMain
+            .map((category) => ({
+              ...category,
+              items: category.items
+                .map((subCategory) => ({
+                  ...subCategory,
+                  items: filterItems(subCategory.items),
+                }))
+                .filter((subCategory) => subCategory.items.length > 0 || subCategory.title.toLowerCase().includes(searchQuery.toLowerCase())),
+            }))
+            .filter((category) => category.items.length > 0 || category.title.toLowerCase().includes(searchQuery.toLowerCase())),
+        }
+      }, [data, searchQuery])
+
+      const handleSearch = (query: string) => {
+        setSearchQuery(query)
+      }
       
     return (
-        // <Sidebar {...props}>
-        // <SidebarHeader className="p-4 mt-6">
-        //     <SearchForm />
-        // </SidebarHeader>
-        // <SidebarContent className="gap-0 p-4">
-        //     {/* We create a collapsible SidebarGroup for each parent. */}
-        //     {data.navMain.map((item) => (
-        //     <Collapsible
-        //         key={item.title}
-        //         title={item.title}
-        //         defaultOpen={false}
-        //         className="group/collapsible"
-        //     >
-        //         <SidebarGroup>
-        //         <SidebarGroupLabel
-        //             asChild
-        //             className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-        //         >
-        //             <CollapsibleTrigger>
-        //             <Link href={"/categories/"+item.url}>
-        //             {item.title}
-        //             </Link>
-        //             <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-        //             </CollapsibleTrigger>
-        //         </SidebarGroupLabel>
-        //         <CollapsibleContent className="overflow-scroll">
-        //             <SidebarGroupContent >
-        //             <SidebarMenu>
-        //             {item.items?.map((obj) => (
-        //                     <Collapsible
-        //                         key={obj.title}
-        //                         title={obj.title}
-        //                         defaultOpen={false}
-        //                         className="group/collapsible pl-8"
-        //                     >
-        //                         <SidebarGroup>
-        //                         <SidebarGroupLabel
-        //                             asChild
-        //                             className="group/label text-sm text-left text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-        //                         >
-        //                             <CollapsibleTrigger>
-        //                             <Link href={`/categories/${item.url}/${obj.url}`}>
-        //                                 {obj.title}
-        //                             </Link>
-        //                             <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-        //                             </CollapsibleTrigger>
-        //                         </SidebarGroupLabel>
-        //                         <CollapsibleContent className="overflow-scroll">
-        //                             <SidebarGroupContent>
-        //                             <SidebarMenu className="pl-4">
-        //                                 {obj.items?.map((inner) => (
-        //                                     <SidebarMenuItem key={inner.title}>
-        //                                         <SidebarMenuButton asChild>
-        //                                         <Link href={`/categories/${item.url}/${obj.url}/${inner.url}`}>
-        //                                             {inner.title}
-        //                                         </Link>
-        //                                         </SidebarMenuButton>
-        //                                     </SidebarMenuItem>
-        //                                 ))}
-        //                             </SidebarMenu>
-        //                             </SidebarGroupContent>
-        //                         </CollapsibleContent>
-        //                         </SidebarGroup>
-        //                     </Collapsible>
-                            
-        //                     ))}
-        //             </SidebarMenu>
-        //             </SidebarGroupContent>
-        //         </CollapsibleContent>
-        //         </SidebarGroup>
-        //     </Collapsible>
-        //     ))}
-        // </SidebarContent>
-        // <SidebarRail />
-        // </Sidebar>
         <Sidebar {...props}>
         <SidebarHeader className="p-4 mt-6">
-            <SearchForm />
+            <SearchForm onSearch={handleSearch} />
         </SidebarHeader>
         <SidebarContent className="gap-0 p-4">
             {/* We create a collapsible SidebarGroup for each parent. */}
-            {Object.entries(sidebarContent).sort().map(([title, subCategoryItems]) => (
+            {filteredData.navMain.map((item) => (
             <Collapsible
-                key={title}
-                title={title}
+                key={item.title}
+                title={item.title}
                 defaultOpen={false}
                 className="group/collapsible"
             >
@@ -747,8 +656,8 @@ export function AppSidebar({ categories, ...props }: sidebarProps) {
                     className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 >
                     <CollapsibleTrigger>
-                    <Link href={"/categories/"+encodeURI(title)}>
-                    {title}
+                    <Link href={"/categories/"+item.url}>
+                    {item.title}
                     </Link>
                     <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                     </CollapsibleTrigger>
@@ -756,10 +665,10 @@ export function AppSidebar({ categories, ...props }: sidebarProps) {
                 <CollapsibleContent className="overflow-scroll">
                     <SidebarGroupContent >
                     <SidebarMenu>
-                    {Object.entries(subCategoryItems).sort().map(([subCategoryTitle, lowtitles]) => (
+                    {item.items?.map((obj) => (
                             <Collapsible
-                                key={subCategoryTitle}
-                                title={subCategoryTitle}
+                                key={obj.title}
+                                title={obj.title}
                                 defaultOpen={false}
                                 className="group/collapsible pl-8"
                             >
@@ -769,8 +678,8 @@ export function AppSidebar({ categories, ...props }: sidebarProps) {
                                     className="group/label text-sm text-left text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                                 >
                                     <CollapsibleTrigger>
-                                    <Link href={`/categories/${encodeURI(title)}/${encodeURI(subCategoryTitle)}`}>
-                                        {subCategoryTitle}
+                                    <Link href={`/categories/${item.url}/${obj.url}`}>
+                                        {obj.title}
                                     </Link>
                                     <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                                     </CollapsibleTrigger>
@@ -778,11 +687,11 @@ export function AppSidebar({ categories, ...props }: sidebarProps) {
                                 <CollapsibleContent className="overflow-scroll">
                                     <SidebarGroupContent>
                                     <SidebarMenu className="pl-4">
-                                        {lowtitles.map((inner) => (
-                                            <SidebarMenuItem key={inner}>
+                                        {obj.items?.map((inner) => (
+                                            <SidebarMenuItem key={inner.title}>
                                                 <SidebarMenuButton asChild>
-                                                <Link href={`/categories/${encodeURI(title)}/${encodeURI(subCategoryTitle)}/${encodeURI(inner)}`}>
-                                                    {inner}
+                                                <Link href={`/categories/${item.url}/${obj.url}/${inner.url}`}>
+                                                    {inner.title}
                                                 </Link>
                                                 </SidebarMenuButton>
                                             </SidebarMenuItem>

@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { CategoryFaculty } from "@/components/cat-faculty";
+import { ArticleCategory } from "@/components/articles-pie";
 import  clientPromise  from '@/lib/mongodb';
 import * as React from "react"
 import {
@@ -9,6 +10,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
+import ArticlesPerYearChart from "@/components/articles-per-year";
 
 interface CategoryInfo {
   /**
@@ -43,6 +45,16 @@ interface CategoryInfo {
   
 }
 
+const perYearData = [
+  { year: 2018, articles: 120 },
+  { year: 2019, articles: 150 },
+  { year: 2020, articles: 180 },
+  { year: 2021, articles: 210 },
+  { year: 2022, articles: 250 },
+  { year: 2023, articles: 300 },
+  { year: 2024, articles: 400 },
+]
+
 export default async function Page() {
   const client = await clientPromise;
 
@@ -51,7 +63,19 @@ export default async function Page() {
   // Get the last element in the slug array or default to an empty string
   const documents = await collection.find({}).toArray();
 
+  const article_collection = await db.collection('article_data');
+
   
+  const perYearData = [];
+  for (let year = 2017; year <= 2024; year++) {
+      const count = await article_collection.countDocuments({
+          date_published_print: {
+              $gte: `${year}-01-01`,
+              $lt: `${year + 1}-01-01`,
+          },
+      });
+      perYearData.push({ year: year, articles: count });
+  }
   // Transform documents to CategoryInfo type
   const categories: CategoryInfo[] = documents.map((doc: any) => ({
     url: doc.url,
@@ -72,6 +96,11 @@ export default async function Page() {
     faculty: doc.faculty_count
   }));
 
+  const pieChart: {category: string; articles: number }[] = categories.map((doc: CategoryInfo) => ({
+    category: doc.category_name,
+    articles: doc.article_count
+  }))
+
   const shuffleArray = (array: any) => {
         const shuffled = [...array];
         for (let i = shuffled.length - 1; i > 0; i--) {
@@ -88,42 +117,32 @@ export default async function Page() {
       <Header />
 
       
-      <div className="grid grid-cols-3 gap-4 p-4">
-        <div className="flex flex-col justify-center items-center bg-white dark:bg-gray-800 rounded-lg shadow-md">
-          <Carousel className="w-full max-w-xs md:m-10">
-            <CarouselContent>
-              {Array.from({ length: Math.ceil(newData.length / 5)}).map((_, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+      <div className="relative flex flex-col justify-center items-center bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+        <div className="w-full max-w-xs">
+          <Carousel className="relative">
+            <CarouselContent className="p-4">
+              {Array.from({ length: Math.ceil(newData.length / 5) }).map((_, index) => (
                 <CarouselItem key={index}>
-              
-                  <h1>Faculty Per Category</h1>
-                  
-                  <CategoryFaculty data={newData.slice(index * 5, index * 5 + 5)}/>
-                                
-                            
+                  <h1 className="text-lg font-semibold mb-2">Faculty Per Category</h1>
+                  <CategoryFaculty data={newData.slice(index * 5, index * 5 + 5)} />
                 </CarouselItem>
               ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
+            </CarouselContent>
+          
+          <div className="flex justify-between mt-4">
+            <CarouselPrevious className="relative text-white rounded-full p-2 bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" />
+            <CarouselNext className="relative text-white rounded-full p-2 bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" />
+          </div>
           </Carousel>
         </div>
       </div>
+      <div className="flex flex-col justify-center items-center bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+        <ArticlesPerYearChart chartData={perYearData} className="min-h-[250px] w-full" />
+      </div>
+    </div>
 
-      {/* <div className="flex flex-1 flex-col gap-4 p-4">
-        <div className="grid grid-cols-3 grid-rows-2 gap-4 relative overflow-visible">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="relative aspect-square rounded-xl bg-muted bg-opacity-50 hover:bg-opacity-100 transition-transform duration-300 transform hover:scale-125 hover:z-10 text-center flex justify-center items-center"
-              style={{
-                transformOrigin: getTransformOrigin(i),
-              }}
-            >
-              <div className="bg-white w-4/5 h-4/5 rounded-xl p-4"></div>
-            </div>
-          ))}
-        </div>
-      </div> */}
+      
     </> 
   );
 }

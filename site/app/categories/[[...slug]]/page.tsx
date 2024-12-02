@@ -176,7 +176,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     return (
       <div className="min-w-full">
         <SidebarProvider className="">
-            <AppSidebar categories={categoryNames}/>
+            <AppSidebar/>
             <div className="fixed top-0 left-0 z-50 p-2">
               <SidebarTrigger className="ml-1 bg-white dark:bg-black text-suGold dark:text-white rounded-md shadow-md" />
             </div>
@@ -249,7 +249,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
     return (
         <SidebarProvider>
-          <AppSidebar categories={categoryNames}/>
+          <AppSidebar />
             <div className="absolute top-0 left-0 z-50 p-2">
               <SidebarTrigger className="ml-1 bg-white dark:bg-black text-suGold dark:text-white rounded-md shadow-md" />
             </div>
@@ -259,7 +259,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <div className="flex flex-1 flex-col gap-4 p-4">
               <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                 {categories.map((category, index) => (
-                  <div key={index} className="flex flex-col justify-center items-center text-center aspect-square rounded-xl bg-muted/50 p-12" >
+                  <div key={index} className="flex flex-col justify-center items-center text-center aspect-square rounded-xl bg-suGray/50 p-12" >
                     <h1 className="font-bold p-4">{category.category_name}</h1>
                     <div className="space-y-2">
                       <p>Faculty Count: {category.faculty_count}</p>
