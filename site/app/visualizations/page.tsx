@@ -1,6 +1,5 @@
 import { Header } from "@/components/Header";
 import { CategoryFaculty } from "@/components/cat-faculty";
-import { ArticleCategory } from "@/components/articles-pie";
 import  clientPromise  from '@/lib/mongodb';
 import * as React from "react"
 import {

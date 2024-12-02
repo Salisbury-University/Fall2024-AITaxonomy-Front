@@ -27,8 +27,8 @@ export default function Home() {
                 <div className="bg-card shadow-md rounded-lg p-4 sm:p-6 mb-6">
                   <h2 className="text-xl sm:text-2xl font-bold mb-4">About the Project</h2>
                   <p className="">
-                    This project focuses on [insert details about what the project does or solves]. Whether you're interested in 
-                    [specific area 1], [specific area 2], or just curious about how it works, you'll find valuable insights here.
+                    This project focuses on [insert details about what the project does or solves]. Whether youre interested in 
+                    [specific area 1], [specific area 2], or just curious about how it works, youll find valuable insights here.
                   </p>
                 </div>
                 {/* How It Works */}
