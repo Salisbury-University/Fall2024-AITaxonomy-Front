@@ -28,7 +28,7 @@ export default function Home() {
                 <div className="bg-white dark:bg-suMaroon shadow-md rounded-lg p-4 sm:p-6 mb-6">
                   <h2 className="text-xl sm:text-2xl font-bold mb-4">About the Project</h2>
                   <p className="">
-                  This project centers on collecting and categorizing research article data using a sophisticated AI system. The AI extracts methodologies and analyzes sentence-level meaning to derive precise categories. By employing prompt chaining, the system systematically "thinks through" each step, ensuring thoughtful and accurate categorization.
+                  This project centers on collecting and categorizing research article data using a sophisticated AI system. The AI extracts methodologies and analyzes sentence-level meaning to derive precise categories. By employing prompt chaining, the system systematically thinks through each step, ensuring thoughtful and accurate categorization.
                   </p>
                 </div>
                 {/* Call to Action */}
